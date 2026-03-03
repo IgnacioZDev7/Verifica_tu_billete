@@ -1,0 +1,129 @@
+<html class="dark"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#2ecc71",
+                        "background-light": "#f6f8f7",
+                        "background-dark": "#131f18",
+                        "bs-turquoise": "#1abc9c",
+                        "bs-orange": "#e67e22",
+                        "bs-violet": "#9b59b6",
+                    },
+                    fontFamily: {
+                        "display": ["Space Grotesk", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.5rem",
+                        "lg": "1rem",
+                        "xl": "1.5rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .fill-icon {
+            font-variation-settings: 'FILL' 1;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 font-display">
+<div class="relative flex h-screen w-full flex-col overflow-hidden max-w-[430px] mx-auto bg-background-dark">
+<!-- Header -->
+<div class="flex items-center bg-background-dark p-4 pb-2 justify-between z-10">
+<div class="text-slate-100 flex size-12 shrink-0 items-center">
+<span class="material-symbols-outlined text-2xl">menu</span>
+</div>
+<h2 class="text-white text-lg font-bold leading-tight tracking-[-0.015em] flex-1 text-center">UNIFRANZ</h2>
+<div class="flex w-12 items-center justify-end">
+<button class="flex items-center justify-center rounded-xl h-12 bg-transparent text-white p-0">
+<span class="material-symbols-outlined text-2xl">account_circle</span>
+</button>
+</div>
+</div>
+<h4 class="text-primary text-xs font-bold leading-normal tracking-widest px-4 py-2 text-center uppercase">Escanear Billetes</h4>
+<!-- Background Content (Dimmed) -->
+<div class="flex-1 px-4 pt-4 opacity-30 pointer-events-none">
+<!-- Viewfinder Area -->
+<div class="relative w-full aspect-[3/4] rounded-xl border-2 border-slate-700/50 flex items-center justify-center overflow-hidden bg-slate-900">
+<div class="absolute inset-0 opacity-20 bg-gradient-to-br from-primary/20 to-transparent" data-alt="Abstract scanning camera view pattern"></div>
+<span class="material-symbols-outlined text-6xl text-slate-700">fit_screen</span>
+</div>
+<!-- Denomination Buttons -->
+<div class="grid grid-cols-3 gap-3 mt-6">
+<button class="flex flex-col items-center justify-center gap-2 p-4 rounded-xl bg-bs-turquoise/20 border border-bs-turquoise/30">
+<span class="text-xl font-bold text-bs-turquoise">10</span>
+<span class="text-[10px] font-medium text-bs-turquoise/80">BOLIVIANOS</span>
+</button>
+<button class="flex flex-col items-center justify-center gap-2 p-4 rounded-xl bg-bs-orange/20 border border-bs-orange/30">
+<span class="text-xl font-bold text-bs-orange">20</span>
+<span class="text-[10px] font-medium text-bs-orange/80">BOLIVIANOS</span>
+</button>
+<button class="flex flex-col items-center justify-center gap-2 p-4 rounded-xl bg-bs-violet/20 border border-bs-violet/30">
+<span class="text-xl font-bold text-bs-violet">50</span>
+<span class="text-[10px] font-medium text-bs-violet/80">BOLIVIANOS</span>
+</button>
+</div>
+</div>
+<!-- Success Modal Overlay -->
+<div class="absolute inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-6">
+<div class="w-full max-w-sm bg-background-dark border-2 border-primary rounded-xl p-8 flex flex-col items-center text-center shadow-2xl">
+<!-- Success Icon -->
+<div class="size-20 rounded-full bg-primary flex items-center justify-center mb-6 shadow-[0_0_30px_rgba(46,204,113,0.4)]">
+<span class="material-symbols-outlined text-white text-5xl font-bold">check</span>
+</div>
+<!-- Text Content -->
+<h3 class="text-white text-2xl font-bold tracking-tight mb-2">BILLETE HABILITADO</h3>
+<p class="text-primary text-sm font-medium tracking-wider mb-10 opacity-90 uppercase">Serie verificada con éxito</p>
+<!-- Action Button -->
+<button class="w-full bg-slate-100 hover:bg-white text-slate-900 font-bold py-4 rounded-xl transition-colors text-sm tracking-wide uppercase">
+                    Limpiar Interfaz
+                </button>
+</div>
+</div>
+<!-- Bottom Navigation Bar -->
+<div class="mt-auto border-t border-slate-800 bg-background-dark px-4 pb-8 pt-3 z-10">
+<div class="flex gap-2">
+<a class="flex flex-1 flex-col items-center justify-end gap-1 text-primary" href="#">
+<div class="flex h-8 items-center justify-center">
+<span class="material-symbols-outlined fill-icon">qr_code_scanner</span>
+</div>
+<p class="text-[10px] font-bold leading-normal tracking-wide uppercase">Escanear</p>
+</a>
+<a class="flex flex-1 flex-col items-center justify-end gap-1 text-slate-500" href="#">
+<div class="flex h-8 items-center justify-center">
+<span class="material-symbols-outlined">history</span>
+</div>
+<p class="text-[10px] font-bold leading-normal tracking-wide uppercase">Historial</p>
+</a>
+<a class="flex flex-1 flex-col items-center justify-end gap-1 text-slate-500" href="#">
+<div class="flex h-8 items-center justify-center">
+<span class="material-symbols-outlined">settings</span>
+</div>
+<p class="text-[10px] font-bold leading-normal tracking-wide uppercase">Ajustes</p>
+</a>
+</div>
+</div>
+</div>
+</body></html>

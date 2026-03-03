@@ -19,7 +19,7 @@ h1 span{color:var(--gold)}
 .video-wrap{position:relative;width:100%;aspect-ratio:16/9;background:#050508}
 video{width:100%;height:100%;object-fit:cover;display:block}
 .scanner-frame{position:absolute;inset:0;display:none;align-items:center;justify-content:center;pointer-events:none}
-.scanner-frame .box{width:70%;height:45px;border:2px solid rgba(201,168,76,.5);border-radius:6px;position:relative}
+.scanner-frame .box{width:70%;height:45px;border:2px solid rgba(243, 112, 33, 0.5);border-radius:6px;position:relative}
 .scanner-frame .box::before{content:'';position:absolute;left:0;right:0;top:50%;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);animation:scan 2s ease-in-out infinite}
 @keyframes scan{0%,100%{opacity:0;transform:translateY(-10px)}50%{opacity:1;transform:translateY(10px)}}
 .label-overlay{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);font-family:'DM Mono',monospace;font-size:11px;color:rgba(201,168,76,.8);background:rgba(0,0,0,.5);padding:3px 10px;border-radius:20px;white-space:nowrap;display:none}

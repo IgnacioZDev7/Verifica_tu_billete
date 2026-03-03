@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html class="dark" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "unifranz-orange": "#F37021",
+                        "bs-10": "#00CED1",
+                        "bs-20": "#FF8C00",
+                        "bs-50": "#8A2BE2",
+                        "background-pure": "#000000",
+                    },
+                    fontFamily: {
+                        "display": ["Space Grotesk"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.5rem",
+                        "lg": "1rem",
+                        "xl": "1.5rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style type="text/tailwindcss">
+        .glass-panel {
+            background: rgba(25, 25, 25, 0.6);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(243, 112, 33, 0.2);
+        }
+        .glass-button {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .scanning-line {
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #F37021, transparent);
+            box-shadow: 0 0 15px #F37021;
+            width: 100%;
+            position: absolute;
+            top: 50%;
+        }
+        .neon-glow {
+            box-shadow: 0 0 15px rgba(243, 112, 33, 0.4);
+        }
+        body {
+            min-height: 100dvh;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-pure font-display text-white min-h-screen flex flex-col overflow-hidden">
+<header class="flex items-center justify-between px-6 pt-12 pb-4 w-full">
+<div class="w-10">
+<span class="material-symbols-outlined text-unifranz-orange">menu</span>
+</div>
+<div class="flex flex-col items-center">
+<span class="text-xs font-bold tracking-widest text-unifranz-orange uppercase">UNIFRANZ</span>
+<span class="text-[10px] text-white/60 uppercase tracking-tighter">Validador de Billetes</span>
+</div>
+<div class="w-10 flex justify-end">
+<span class="material-symbols-outlined text-white">account_circle</span>
+</div>
+</header>
+<main class="flex-1 flex flex-col relative px-4 overflow-y-auto pb-6">
+<div class="flex-grow relative flex items-center justify-center py-2 min-h-[40vh]">
+<div class="w-full h-full relative border-2 border-unifranz-orange/40 rounded-lg overflow-hidden neon-glow">
+<div class="absolute inset-0 bg-unifranz-orange/5"></div>
+<div class="absolute top-0 left-0 w-6 h-6 border-t-2 border-l-2 border-unifranz-orange"></div>
+<div class="absolute top-0 right-0 w-6 h-6 border-t-2 border-r-2 border-unifranz-orange"></div>
+<div class="absolute bottom-0 left-0 w-6 h-6 border-b-2 border-l-2 border-unifranz-orange"></div>
+<div class="absolute bottom-0 right-0 w-6 h-6 border-b-2 border-r-2 border-unifranz-orange"></div>
+<div class="scanning-line"></div>
+<div class="absolute top-4 right-4 z-10">
+<button class="glass-button w-12 h-12 rounded-full flex items-center justify-center text-white active:text-unifranz-orange transition-colors">
+<span class="material-symbols-outlined text-2xl">flashlight_on</span>
+</button>
+</div>
+<div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+<p class="text-[10px] uppercase tracking-[0.2em] text-unifranz-orange font-medium px-4 text-center">Alinee el billete dentro de la zona</p>
+</div>
+</div>
+</div>
+<div class="glass-panel rounded-xl p-5 mt-4 mb-4 shadow-2xl">
+<div class="flex items-center justify-between mb-6">
+<h3 class="text-xs font-bold tracking-widest text-unifranz-orange uppercase">INGRESO MANUAL</h3>
+<div class="flex gap-2">
+<button class="px-3 py-1.5 rounded-lg bg-bs-10 text-white text-[10px] font-bold shadow-sm ring-1 ring-white/10 active:opacity-80">10 Bs</button>
+<button class="px-3 py-1.5 rounded-lg bg-bs-20 text-white text-[10px] font-bold shadow-sm ring-1 ring-white/10 active:opacity-80">20 Bs</button>
+<button class="px-3 py-1.5 rounded-lg bg-bs-50 text-white text-[10px] font-bold shadow-sm ring-1 ring-white/10 active:opacity-80">50 Bs</button>
+</div>
+</div>
+<div class="space-y-4">
+<div>
+<label class="block text-[10px] uppercase tracking-wider text-white/50 mb-1.5 ml-1">NÚMERO DE SERIE</label>
+<input class="w-full bg-black/60 border border-unifranz-orange/20 rounded-lg py-3 px-4 text-white placeholder:text-white/20 focus:outline-none focus:border-unifranz-orange transition-colors font-mono" placeholder="8 dígitos (ej. 04377377)" type="text"/>
+</div>
+<div>
+<label class="block text-[10px] uppercase tracking-wider text-white/50 mb-1.5 ml-1">LETRA DE SERIE</label>
+<input class="w-full bg-black/60 border border-unifranz-orange/20 rounded-lg py-3 px-4 text-white placeholder:text-white/20 focus:outline-none focus:border-unifranz-orange transition-colors font-mono uppercase" placeholder="Ej. B" type="text"/>
+</div>
+</div>
+<div class="mt-8 flex items-center gap-4">
+<button class="flex items-center justify-center w-14 h-14 rounded-full border border-unifranz-orange/30 text-unifranz-orange hover:bg-unifranz-orange/10 transition-colors active:bg-unifranz-orange/20">
+<span class="material-symbols-outlined">add_photo_alternate</span>
+</button>
+<button class="flex-1 flex items-center justify-center gap-2 bg-unifranz-orange hover:brightness-110 text-white font-bold h-14 rounded-full shadow-lg shadow-unifranz-orange/20 uppercase tracking-wider active:scale-[0.98] transition-transform">
+<span class="material-symbols-outlined fill-1">qr_code_scanner</span>
+                    ESCANEAR BILLETE
+                </button>
+</div>
+</div>
+<div class="text-center px-6 pb-4">
+<p class="text-[10px] text-white/40 leading-relaxed">
+                Denominaciones afectadas (Serie B): 
+                <span class="text-bs-10 font-bold">Bs 10</span>, 
+                <span class="text-bs-20 font-bold">Bs 20</span>, 
+                <span class="text-bs-50 font-bold">Bs 50</span>. 
+                Consulte fuentes oficiales en 
+                <a class="text-white/60 underline underline-offset-2" href="https://bcb.gob.bo">bcb.gob.bo</a>
+</p>
+</div>
+</main>
+<nav class="border-t border-white/5 bg-background-pure pb-8 pt-2">
+<div class="flex justify-around items-center px-4">
+<a class="flex flex-col items-center gap-1 text-unifranz-orange" href="#">
+<span class="material-symbols-outlined fill-1">document_scanner</span>
+<span class="text-[10px] font-medium">Escáner</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-white/40" href="#">
+<span class="material-symbols-outlined">history</span>
+<span class="text-[10px] font-medium">Historial</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-white/40" href="#">
+<span class="material-symbols-outlined">verified</span>
+<span class="text-[10px] font-medium">Seguridad</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-white/40" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="text-[10px] font-medium">Ajustes</span>
+</a>
+</div>
+</nav>
+
+</body></html>

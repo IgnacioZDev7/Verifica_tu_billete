@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html class="dark" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#F37021",
+                        "unifranz-orange": "#F37021",
+                        "alert-red": "#E74C3C",
+                        "bs-10": "#00A9E0",
+                        "bs-20": "#F37021",
+                        "bs-50": "#93328E",
+                        "background-light": "#f8f6f5",
+                        "background-dark": "#0A0A0A",
+                    },
+                    fontFamily: {
+                        "display": ["Space Grotesk", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.5rem",
+                        "lg": "1rem",
+                        "xl": "1.5rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style type="text/tailwindcss">
+        body {
+            min-height: 100dvh;
+        }
+        .dimmed-background {
+            filter: brightness(0.3) grayscale(0.2) blur(2px);
+            pointer-events: none;
+        }
+    </style>
+<style>
+        body {
+            min-height: max(884px, 100dvh);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 overflow-hidden">
+<div class="relative flex h-screen w-full flex-col overflow-hidden">
+<header class="flex items-center bg-background-light dark:bg-background-dark p-4 justify-between border-b border-white/5 dimmed-background">
+<div class="flex size-12 shrink-0 items-center justify-start">
+<span class="material-symbols-outlined text-slate-900 dark:text-slate-100">menu</span>
+</div>
+<h2 class="text-slate-900 dark:text-slate-100 text-lg font-bold leading-tight tracking-tight flex-1 text-center">UNIFRANZ Scan</h2>
+<div class="flex size-12 items-center justify-end">
+<button class="flex items-center justify-center rounded-full size-10 bg-unifranz-orange/10 text-unifranz-orange">
+<span class="material-symbols-outlined">person</span>
+</button>
+</div>
+</header>
+<main class="relative flex-1 flex flex-col items-center justify-center p-6 bg-slate-200 dark:bg-black/20 dimmed-background">
+<div class="absolute top-4 left-0 right-0 px-6 flex justify-between gap-3 z-10">
+<div class="flex-1 h-12 rounded-lg bg-bs-10 flex items-center justify-center font-bold text-white shadow-lg">10 Bs</div>
+<div class="flex-1 h-12 rounded-lg bg-bs-20 flex items-center justify-center font-bold text-white shadow-lg">20 Bs</div>
+<div class="flex-1 h-12 rounded-lg bg-bs-50 flex items-center justify-center font-bold text-white shadow-lg">50 Bs</div>
+</div>
+<div class="relative w-full aspect-[3/4] rounded-xl border-2 border-white/10 flex items-center justify-center overflow-hidden">
+<img alt="Banknote being scanned" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuABCq1QEnQVs9BqDy2G-WT3VFDYtqajWshVG8r4crm7GhTfv3yIhHkf7NZuDQV17T1c10xcxcwdfKyMh1k2T131wYSSX3kKv73rsgbhe170r6BqZVdx2YhsYLDqYvntLTRwbSLQ6LrUZb1nlFDw4k1JAszrBraPKrcNe5DmSCKVJcbCsW0NYyB0r_KOAfMbXYK5Up4JIuMSzdsba71qWKB7_eaFq7QA5LWkbQSZsdwxv1IpZX85RdOrNDrET96YzhXLtxg9kOfOh0MN"/>
+<div class="absolute inset-0 border-[40px] border-black/40"></div>
+<div class="absolute top-1/2 left-0 w-full h-0.5 bg-unifranz-orange/50 shadow-[0_0_15px_rgba(243,112,33,0.8)]"></div>
+</div>
+<div class="mt-8 flex items-center justify-center gap-8">
+<button class="flex shrink-0 items-center justify-center rounded-full size-12 bg-slate-800 text-white">
+<span class="material-symbols-outlined">image</span>
+</button>
+<button class="flex shrink-0 items-center justify-center rounded-full size-20 bg-unifranz-orange text-white">
+<span class="material-symbols-outlined text-4xl">qr_code_scanner</span>
+</button>
+<button class="flex shrink-0 items-center justify-center rounded-full size-12 bg-slate-800 text-white">
+<span class="material-symbols-outlined">flashlight_on</span>
+</button>
+</div>
+</main>
+<div class="absolute inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-6">
+<div class="w-full max-w-[340px] bg-[#121212] border-2 border-alert-red rounded-3xl overflow-hidden shadow-[0_25px_60px_rgba(0,0,0,0.8)]">
+<div class="p-8 flex flex-col items-center">
+<div class="mb-6 flex items-center justify-center w-20 h-20 rounded-full bg-alert-red/10 border border-alert-red/20">
+<span class="material-symbols-outlined text-alert-red text-5xl font-light">report</span>
+</div>
+<div class="text-center mb-8">
+<h3 class="text-white text-xl font-bold leading-tight mb-2">BILLETE NO VÁLIDO</h3>
+<div class="bg-alert-red px-3 py-1 rounded-md inline-block">
+<p class="text-white text-xs font-bold tracking-[0.2em] uppercase">Serie Restringida</p>
+</div>
+</div>
+<p class="text-slate-400 text-sm text-center mb-10 px-4 leading-relaxed">
+                        El número de serie detectado no coincide con los estándares de emisión vigentes del Banco Central.
+                    </p>
+<div class="w-full flex flex-col gap-4">
+<button class="w-full py-4 bg-[#F2F2F7] hover:bg-white text-[#1C1C1E] font-bold rounded-2xl flex items-center justify-center gap-2 transition-all active:scale-[0.98]">
+<span class="material-symbols-outlined text-xl">refresh</span>
+                            LIMPIAR INTERFAZ
+                        </button>
+<button class="w-full py-4 bg-unifranz-orange hover:bg-orange-500 text-white font-bold rounded-2xl flex items-center justify-center gap-2 transition-all active:scale-[0.98]">
+<span class="material-symbols-outlined text-xl">warning</span>
+                            REPORTAR INCIDENCIA
+                        </button>
+</div>
+</div>
+</div>
+</div>
+<nav class="flex gap-2 border-t border-white/5 bg-background-light dark:bg-background-dark px-4 pb-8 pt-2 dimmed-background">
+<a class="flex flex-1 flex-col items-center justify-end gap-1 text-unifranz-orange" href="#">
+<span class="material-symbols-outlined">camera</span>
+<p class="text-[10px] font-bold uppercase tracking-wider">Escanear</p>
+</a>
+<a class="flex flex-1 flex-col items-center justify-end gap-1 text-slate-400 dark:text-slate-600" href="#">
+<span class="material-symbols-outlined">history</span>
+<p class="text-[10px] font-bold uppercase tracking-wider">Historial</p>
+</a>
+<a class="flex flex-1 flex-col items-center justify-end gap-1 text-slate-400 dark:text-slate-600" href="#">
+<span class="material-symbols-outlined">settings</span>
+<p class="text-[10px] font-bold uppercase tracking-wider">Ajustes</p>
+</a>
+</nav>
+</div>
+
+</body></html>
