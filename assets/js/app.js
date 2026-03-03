@@ -265,11 +265,13 @@ async function processImage(blob) {
     
     if (rawText) {
       console.log('Texto RAW detectado:', rawText);
-      // Limpieza pre-regex: corregir confusiones comunes (O -> 0, I -> 1) en zonas de números
-      let cleanText = rawText.toUpperCase().replace(/[OI]/g, (m) => m === 'O' ? '0' : '1');
+      // Limpieza pre-regex: eliminar ruidos comunes de palabras en billetes
+      let cleanText = rawText.toUpperCase()
+        .replace(/BOLIVIA|ESTADO|PLURINACIONAL|BANCO|CENTRAL|LEY|DE|NOVIEMBRE/g, ' ')
+        .replace(/[OI]/g, (m) => m === 'O' ? '0' : '1');
       
-      // Busca patrones como A12345678 o 12345678A
-      const match = cleanText.match(/([A-Z]\s*\d{7,10})|(\d{7,10}\s*[A-Z])/);
+      // Busca patrones: Prioriza número seguido de letra (ej: 12345678 B)
+      const match = cleanText.match(/(\d{7,11}\s*[A-Z])|([A-Z]\s*\d{7,11})/);
       if (match) serial = match[0].replace(/\s/g, '');
     }
 
