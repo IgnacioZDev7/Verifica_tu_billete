@@ -1,208 +1,172 @@
 <!DOCTYPE html>
-<html class="dark" lang="es">
+<html lang="es">
 <head>
-    <meta charset="utf-8"/>
-    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-    <title>UNIFRANZ - Validador de Billetes</title>
-    
-    <!-- Scripts Externos -->
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js"></script>
-    
-    <!-- Configuración Tailwind Custom -->
-    <script id="tailwind-config">
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    colors: {
-                        "unifranz-orange": "#F37021",
-                        "bs-10": "#00CED1",
-                        "bs-20": "#FF8C00",
-                        "bs-50": "#8A2BE2",
-                        "background-pure": "#000000",
-                        "alert-red": "#E74C3C",
-                    },
-                    fontFamily: { "display": ["Space Grotesk"] },
-                    borderRadius: { "DEFAULT": "0.5rem", "lg": "1rem", "xl": "1.5rem", "full": "9999px" }
-                }
-            }
-        }
-    </script>
-    
-    <!-- CSS Propio -->
-    <link rel="stylesheet" href="assets/css/style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UNIFRANZ - Validador de Billetes</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Mono:wght@400;500&display=swap');
+  :root {
+    --bg:#0a0a0f; --surface:#12121a; --border:#1e1e2e;
+    --ok:#00e57a; --bad:#ff3b5c; --warn:#ffc233;
+    --text:#e8e8f0; --muted:#5a5a7a; --gold:#c9a84c;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--text);font-family:'Syne',sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;overflow-x:hidden}
+  body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:0;opacity:.4}
+  header{width:100%;max-width:600px;padding:40px 24px 20px;position:relative;z-index:1}
+  .logo-row{display:flex;align-items:center;gap:12px;margin-bottom:8px}
+  .logo-badge{width:36px;height:36px;border:2px solid var(--gold);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;color:var(--gold);letter-spacing:-1px}
+  h1{font-size:clamp(22px,5vw,28px);font-weight:800;letter-spacing:-.5px}
+  h1 span{color:var(--gold)}
+  .subtitle{font-size:13px;color:var(--muted);font-family:'DM Mono',monospace;margin-top:6px}
+  .alert-banner{width:100%;max-width:600px;margin:0 24px 24px;padding:12px 16px;background:rgba(255,59,92,.08);border:1px solid rgba(255,59,92,.3);border-radius:10px;font-size:12px;font-family:'DM Mono',monospace;color:#ff8fa0;line-height:1.6;position:relative;z-index:1}
+  .main{width:100%;max-width:600px;padding:0 24px 60px;display:flex;flex-direction:column;gap:20px;position:relative;z-index:1}
+  .capture-zone{background:var(--surface);border:1.5px solid var(--border);border-radius:16px;overflow:hidden}
+  .video-wrap{position:relative;width:100%;aspect-ratio:16/9;background:#050508}
+  video{width:100%;height:100%;object-fit:cover;display:block}
+  .scanner-frame{position:absolute;inset:0;display:none;align-items:center;justify-content:center;pointer-events:none}
+  .scanner-frame .box{width:70%;height:45px;border:2px solid rgba(201,168,76,.5);border-radius:6px;position:relative}
+  .scanner-frame .box::before{content:'';position:absolute;left:0;right:0;top:50%;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);animation:scan 2s ease-in-out infinite}
+  @keyframes scan{0%,100%{opacity:0;transform:translateY(-10px)}50%{opacity:1;transform:translateY(10px)}}
+  .label-overlay{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);font-family:'DM Mono',monospace;font-size:11px;color:rgba(201,168,76,.8);background:rgba(0,0,0,.5);padding:3px 10px;border-radius:20px;white-space:nowrap;display:none}
+  .camera-off-msg{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:var(--muted);font-size:13px;text-align:center}
+  .controls{display:flex;gap:8px;padding:14px;flex-wrap:wrap}
+  .btn{flex:1;min-width:100px;padding:12px 8px;border:none;border-radius:10px;font-family:'Syne',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .15s}
+  .btn:active{transform:scale(.97)}
+    .btn-primary{background:#F37021;color:white}
+    .btn-primary:hover{background:#d45d1a}
+  </style>
 </head>
-<body class="bg-background-pure font-display text-white min-h-screen flex flex-col overflow-hidden">
+<body class="bg-black font-['Space_Grotesk'] text-white">
 
-    <!-- Header Principal -->
-    <header class="flex items-center justify-between px-6 pt-12 pb-4 w-full">
-        <div class="w-10">
-            <span class="material-symbols-outlined text-unifranz-orange">menu</span>
-        </div>
-        <div class="flex flex-col items-center">
-            <span class="text-xs font-bold tracking-widest text-unifranz-orange uppercase">UNIFRANZ</span>
-            <div id="status-badge" class="flex items-center gap-1 mt-1">
-                <span class="size-1.5 rounded-full bg-white/20" id="status-dot"></span>
-                <span id="status-text" class="text-[8px] text-white/40 uppercase tracking-tighter">Cámara no iniciada</span>
-            </div>
-        </div>
-        <div class="w-10 flex justify-end">
-            <span class="material-symbols-outlined text-white">account_circle</span>
-        </div>
-    </header>
-
-    <main class="flex-1 flex flex-col relative px-4 overflow-y-auto pb-6">
-        <!-- Area de Escaneo -->
-        <div class="flex-grow relative flex items-center justify-center py-2 min-h-[40vh]">
-            <div class="w-full h-full relative border-2 border-unifranz-orange/40 rounded-lg overflow-hidden neon-glow">
-                <!-- Capa 1: Video -->
-                <video id="video" autoplay playsinline muted class="absolute inset-0 w-full h-full"></video>
-                
-                <!-- Capa 2: Gradiente de enfoque -->
-                <div class="scanner-overlay"></div>
-                
-                <!-- Capa 3: Marcadores y Animación -->
-                <div class="absolute top-0 left-0 w-8 h-8 border-t-4 border-l-4 border-unifranz-orange rounded-tl-lg scanner-marks"></div>
-                <div class="absolute top-0 right-0 w-8 h-8 border-t-4 border-r-4 border-unifranz-orange rounded-tr-lg scanner-marks"></div>
-                <div class="absolute bottom-0 left-0 w-8 h-8 border-b-4 border-l-4 border-unifranz-orange rounded-bl-lg scanner-marks"></div>
-                <div class="absolute bottom-0 right-0 w-8 h-8 border-b-4 border-r-4 border-unifranz-orange rounded-br-lg scanner-marks"></div>
-                <div class="scanning-line"></div>
-                
-                <!-- Controles sobre el video -->
-                <div class="absolute top-4 right-4 z-50">
-                    <button id="btnFlash" class="glass-button w-12 h-12 rounded-full flex items-center justify-center text-white active:text-unifranz-orange transition-colors" style="display:none; background: rgba(0,0,0,0.4); backdrop-filter: blur(5px); border: 1px solid rgba(255,255,255,0.1);">
-                        <span class="material-symbols-outlined text-2xl">flashlight_on</span>
-                    </button>
-                </div>
-                
-                <!-- Texto Guía -->
-                <div class="absolute inset-0 flex items-end justify-center pointer-events-none pb-6 z-50">
-                    <p class="text-[9px] uppercase tracking-[0.2em] text-unifranz-orange font-bold bg-black/40 px-3 py-1 rounded-full backdrop-blur-sm">Alinee el número de serie</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Ingreso Manual y Controles -->
-        <div class="glass-panel rounded-xl p-5 mt-4 mb-4 shadow-2xl">
-            <div class="flex items-center justify-between mb-6">
-                <h3 class="text-xs font-bold tracking-widest text-unifranz-orange uppercase">INGRESO MANUAL</h3>
-                <div class="flex gap-2" id="denom-buttons">
-                    <button class="denom-btn px-3 py-1.5 rounded-lg bg-bs-10 text-white text-[10px] font-bold shadow-sm ring-1 ring-white/10 active:opacity-80" data-value="10">10 Bs</button>
-                    <button class="denom-btn px-3 py-1.5 rounded-lg bg-bs-20 text-white text-[10px] font-bold shadow-sm ring-1 ring-white/10 active:opacity-80" data-value="20">20 Bs</button>
-                    <button class="denom-btn px-3 py-1.5 rounded-lg bg-bs-50 text-white text-[10px] font-bold shadow-sm ring-1 ring-white/10 active:opacity-80" data-value="50">50 Bs</button>
-                </div>
-            </div>
-            <div class="space-y-4">
-                <div>
-                    <label class="block text-[10px] uppercase tracking-wider text-white/50 mb-1.5 ml-1">NÚMERO DE SERIE</label>
-                    <input id="serie-num-input" class="w-full bg-black/60 border border-unifranz-orange/20 rounded-lg py-3 px-4 text-white placeholder:text-white/20 focus:outline-none focus:border-unifranz-orange transition-colors font-mono" placeholder="8 dígitos (ej. 04377377)" type="text" maxlength="8"/>
-                </div>
-                <div>
-                    <label class="block text-[10px] uppercase tracking-wider text-white/50 mb-1.5 ml-1">LETRA DE SERIE</label>
-                    <input id="serie-letter-input" class="w-full bg-black/60 border border-unifranz-orange/20 rounded-lg py-3 px-4 text-white placeholder:text-white/20 focus:outline-none focus:border-unifranz-orange transition-colors font-mono uppercase" placeholder="Ej. B" type="text" maxlength="1"/>
-                </div>
-            </div>
-            <div class="mt-8 flex items-center gap-4">
-                <button id="upload-btn" class="flex items-center justify-center w-14 h-14 rounded-full border border-unifranz-orange/30 text-unifranz-orange hover:bg-unifranz-orange/10 transition-colors active:bg-unifranz-orange/20">
-                    <span class="material-symbols-outlined">add_photo_alternate</span>
-                </button>
-                <input type="file" id="fileInput" accept="image/*" class="hidden">
-                <button id="scan-btn" class="flex-1 flex items-center justify-center gap-2 bg-unifranz-orange hover:brightness-110 text-white font-bold h-14 rounded-full shadow-lg shadow-unifranz-orange/20 uppercase tracking-wider active:scale-[0.98] transition-transform">
-                    <span class="material-symbols-outlined fill-1">qr_code_scanner</span>
-                    ESCANEAR BILLETE
-                </button>
-                <button id="capture-btn" class="hidden flex-1 flex items-center justify-center gap-2 bg-unifranz-orange hover:brightness-110 text-white font-bold h-14 rounded-full shadow-lg shadow-unifranz-orange/20 uppercase tracking-wider active:scale-[0.98] transition-transform">
-                    <span class="material-symbols-outlined fill-1">photo_camera</span>
-                    CAPTURAR
-                </button>
-            </div>
-        </div>
-
-        <div class="text-center px-6 pb-4">
-            <p class="text-[10px] text-white/40 leading-relaxed">
-                Denominaciones afectadas (Serie B): 
-                <span class="text-bs-10 font-bold">Bs 10</span>, 
-                <span class="text-bs-20 font-bold">Bs 20</span>, 
-                <span class="text-bs-50 font-bold">Bs 50</span>. 
-                Consulte fuentes oficiales en <a class="text-white/60 underline underline-offset-2" href="https://bcb.gob.bo">bcb.gob.bo</a>
-            </p>
-        </div>
-    </main>
-
-    <!-- Navegación Inferior -->
-    <nav class="border-t border-white/5 bg-background-pure pb-8 pt-2">
-        <div class="flex justify-around items-center px-4">
-            <a class="flex flex-col items-center gap-1 text-unifranz-orange" href="#">
-                <span class="material-symbols-outlined fill-1">document_scanner</span>
-                <span class="text-[10px] font-medium">Escáner</span>
-            </a>
-            <a class="flex flex-col items-center gap-1 text-white/40" href="#">
-                <span class="material-symbols-outlined">history</span>
-                <span class="text-[10px] font-medium">Historial</span>
-            </a>
-            <a class="flex flex-col items-center gap-1 text-white/40" href="#">
-                <span class="material-symbols-outlined">verified</span>
-                <span class="text-[10px] font-medium">Seguridad</span>
-            </a>
-            <a class="flex flex-col items-center gap-1 text-white/40" href="#">
-                <span class="material-symbols-outlined">settings</span>
-                <span class="text-[10px] font-medium">Ajustes</span>
-            </a>
-        </div>
-    </nav>
-
-    <!-- MODAL DE ÉXITO (Oculto por defecto) -->
-    <div id="success-modal" class="hidden absolute inset-0 z-50 items-center justify-center bg-black/70 backdrop-blur-md p-6">
-        <div class="w-full max-w-sm bg-[#121212] border-2 border-[#2ecc71] rounded-3xl p-8 flex flex-col items-center text-center shadow-2xl neon-glow-success">
-            <div class="size-20 rounded-full bg-[#2ecc71] flex items-center justify-center mb-6 shadow-[0_0_30px_rgba(46,204,113,0.4)]">
-                <span class="material-symbols-outlined text-white text-5xl font-bold">check</span>
-            </div>
-            <h3 class="text-white text-2xl font-bold tracking-tight mb-2">BILLETE HABILITADO</h3>
-            <p id="success-serie" class="text-[#2ecc71] text-sm font-medium tracking-wider mb-4 opacity-90 uppercase">SERIE: B12345678</p>
-            <p id="success-desc" class="text-slate-400 text-xs text-center mb-10 px-4 leading-relaxed">
-                Este billete no se encuentra en los rangos inhabilitados.
-            </p>
-            <button class="clear-btn w-full bg-slate-100 hover:bg-white text-slate-900 font-bold py-4 rounded-xl transition-colors text-sm tracking-wide uppercase">
-                Limpiar Interfaz
-            </button>
-        </div>
+<header class="flex items-center justify-between px-6 pt-10 pb-4 w-full max-w-2xl mx-auto">
+    <div class="w-10"><span class="material-symbols-outlined text-[#F37021]">menu</span></div>
+    <div class="flex flex-col items-center">
+        <span class="text-sm font-bold tracking-widest text-[#F37021] uppercase">UNIFRANZ</span>
+        <span class="text-[10px] text-white/40 uppercase tracking-tighter">Validador de Billetes Oficial</span>
     </div>
+    <div class="w-10 flex justify-end"><span class="material-symbols-outlined text-white">account_circle</span></div>
+</header>
 
-    <!-- MODAL DE ERROR (Oculto por defecto) -->
-    <div id="error-modal" class="hidden absolute inset-0 z-50 items-center justify-center bg-black/70 backdrop-blur-md p-6">
-        <div class="w-full max-w-[340px] bg-[#121212] border-2 border-alert-red rounded-3xl overflow-hidden shadow-[0_25px_60px_rgba(0,0,0,0.8)] neon-glow-error">
-            <div class="p-8 flex flex-col items-center">
-                <div class="mb-6 flex items-center justify-center w-20 h-20 rounded-full bg-alert-red/10 border border-alert-red/20">
-                    <span class="material-symbols-outlined text-alert-red text-5xl font-light">report</span>
-                </div>
-                <div class="text-center mb-8">
-                    <h3 class="text-white text-xl font-bold leading-tight mb-2">BILLETE NO VÁLIDO</h3>
-                    <p id="error-serie" class="text-alert-red text-sm font-bold tracking-widest uppercase mb-2">SERIE: B12345678</p>
-                    <div class="bg-alert-red px-3 py-1 rounded-md inline-block">
-                        <p class="text-white text-xs font-bold tracking-[0.2em] uppercase">Serie Restringida</p>
-                    </div>
-                </div>
-                <p id="error-desc" class="text-slate-400 text-sm text-center mb-10 px-4 leading-relaxed">
-                    El número de serie detectado pertenece a un rango inhabilitado por el BCB.
-                </p>
-                <div class="w-full flex flex-col gap-4">
-                    <button class="clear-btn w-full py-4 bg-[#F2F2F7] hover:bg-white text-[#1C1C1E] font-bold rounded-2xl flex items-center justify-center gap-2 transition-all active:scale-[0.98]">
-                        <span class="material-symbols-outlined text-xl">refresh</span>
-                        LIMPIAR INTERFAZ
-                    </button>
-                    <button id="report-btn" class="w-full py-4 bg-unifranz-orange hover:bg-orange-500 text-white font-bold rounded-2xl flex items-center justify-center gap-2 transition-all active:scale-[0.98]">
-                        <span class="material-symbols-outlined text-xl">warning</span>
-                        REPORTAR INCIDENCIA
-                    </button>
-                </div>
-            </div>
-        </div>
+<div class="w-full max-w-2xl px-6 mb-6 mx-auto">
+    <div class="bg-[#F37021]/10 border border-[#F37021]/30 rounded-xl p-4 flex gap-3 items-center">
+        <span class="material-symbols-outlined text-[#F37021] text-xl">report</span>
+        <p class="text-[11px] leading-tight text-[#F37021]/90 font-medium tracking-tight">
+            IMPORTANTE: Solo los billetes Serie B de Bs 10, 20 y 50 indicados por el BCB carecen de valor legal.
+        </p>
     </div>
+</div>
 
-    <!-- Script de Aplicación -->
-    <script src="assets/js/app.js"></script>
+<div class="main">
+
+  <div class="capture-zone">
+    <div class="video-wrap">
+      <video id="video" autoplay playsinline muted></video>
+      <div class="scanner-frame" id="scannerFrame"><div class="box"></div></div>
+      <div class="label-overlay" id="labelOverlay">Encuadrá el número de serie</div>
+      <button id="btnFlash" class="btn" style="position:absolute; top:10px; right:10px; width:auto; display:none; background:rgba(0,0,0,0.6); color:var(--gold); border:1px solid var(--gold); padding:5px 10px; font-size:11px; z-index:10;">🔦 Flash Off</button>
+      <div class="camera-off-msg" id="cameraOffMsg">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+          <circle cx="12" cy="13" r="4"/>
+        </svg>
+        Cámara no activa
+      </div>
+    </div>
+    <div class="flex gap-2 p-4">
+      <button class="flex-1 bg-[#F37021] hover:bg-[#d45d1a] text-white font-bold py-3 px-4 rounded-xl flex items-center justify-center gap-2 transition-all active:scale-95 shadow-lg shadow-orange-500/10 text-xs uppercase tracking-wider" id="btnCamera">
+        <span class="material-symbols-outlined text-lg">videocam</span> Activar cámara 
+      </button>
+      <button class="flex-1 bg-[#1e1e2e] hover:bg-[#2a2a3e] disabled:opacity-30 text-white font-bold py-3 px-4 rounded-xl flex items-center justify-center gap-2 transition-all active:scale-95 text-xs uppercase tracking-wider" id="btnCapture" disabled>
+        <span class="material-symbols-outlined text-lg">bolt</span> Capturar 
+      </button>
+      <button class="bg-[#1e1e2e] hover:bg-[#2a2a3e] text-white font-bold py-3 px-4 rounded-xl flex items-center justify-center transition-all active:scale-95 shadow-lg" id="btnUpload">
+        <span class="material-symbols-outlined">add_photo_alternate</span>
+      </button>
+      <input type="file" id="fileInput" accept="image/*" class="hidden">
+    </div>
+  </div>
+
+  <div class="manual-section">
+    <div class="section-label">Ingresar manualmente</div>
+    <div class="flex gap-2 flex-col sm:flex-row">
+      <select class="bg-black/40 border border-[#1e1e2e] rounded-xl px-4 py-3 font-mono text-sm focus:border-[#F37021] outline-none" id="denomSelect">
+        <option value="">Bs.</option>
+        <option value="10">Bs 10</option>
+        <option value="20">Bs 20</option>
+        <option value="50">Bs 50</option>
+      </select>
+      <input class="flex-1 bg-black/40 border border-[#1e1e2e] rounded-xl px-4 py-3 font-mono text-base tracking-[3px] uppercase focus:border-[#F37021] outline-none placeholder:tracking-normal placeholder:text-white/20" id="serieInput" type="text"
+             placeholder="Ej: 043773774 B" maxlength="12">
+      <button class="bg-[#F37021] hover:bg-[#d45d1a] text-white font-bold py-3 px-6 rounded-xl transition-all active:scale-95 shadow-lg shadow-orange-500/10 uppercase text-xs tracking-widest" id="btnVerify">Verificar</button>
+    </div>
+  </div>
+
+  <div class="processing" id="processing">
+    <div class="spinner"></div>
+    <span id="processingMsg">Procesando…</span>
+  </div>
+
+  <div class="debug-box" id="debugBox">
+    <div class="debug-label">Serie detectada por OCR</div>
+    <div class="debug-text" id="debugText"></div>
+  </div>
+
+  <div id="resultCard" class="hidden"></div> <!-- Mantenemos el ID por si acaso, pero oculto -->
+
+  <!-- MODAL DE ÉXITO -->
+  <div id="success-modal" class="hidden fixed inset-0 z-[100] items-center justify-center bg-black/80 backdrop-blur-md p-6">
+    <div class="w-full max-w-sm bg-[#121212] border-2 border-[#00e57a] rounded-3xl p-8 flex flex-col items-center text-center shadow-2xl">
+      <div class="w-20 h-20 rounded-full bg-[#00e57a] flex items-center justify-center mb-6 shadow-[0_0_30px_rgba(0,229,122,0.4)]">
+        <span class="material-symbols-outlined text-white text-5xl font-bold">check</span>
+      </div>
+      <h3 class="text-white text-2xl font-bold tracking-tight mb-2 uppercase">BILLETE HABILITADO</h3>
+      <p id="success-serie" class="text-[#00e57a] text-sm font-medium tracking-wider mb-4 opacity-90 uppercase">SERIE: —</p>
+      <p id="success-desc" class="text-slate-400 text-xs text-center mb-10 px-4 leading-relaxed">
+        Este billete no se encuentra en los rangos inhabilitados.
+      </p>
+      <button class="clear-btn w-full bg-white text-black font-bold py-4 rounded-xl transition-colors text-sm tracking-wide uppercase active:scale-95">
+        Volver a Escanear
+      </button>
+    </div>
+  </div>
+
+  <!-- MODAL DE ERROR -->
+  <div id="error-modal" class="hidden fixed inset-0 z-[100] items-center justify-center bg-black/80 backdrop-blur-md p-6">
+    <div class="w-full max-w-sm bg-[#121212] border-2 border-[#ff3b5c] rounded-3xl p-8 flex flex-col items-center text-center shadow-2xl">
+      <div class="w-20 h-20 rounded-full bg-[#ff3b5c] flex items-center justify-center mb-6 shadow-[0_0_30px_rgba(255,59,92,0.4)]">
+        <span class="material-symbols-outlined text-white text-5xl font-bold">report</span>
+      </div>
+      <h3 class="text-white text-2xl font-bold tracking-tight mb-2 uppercase">BILLETE INHABILITADO</h3>
+      <p id="error-serie" class="text-[#ff3b5c] text-sm font-bold tracking-widest uppercase mb-4">SERIE: —</p>
+      <p id="error-desc" class="text-slate-400 text-xs text-center mb-10 px-4 leading-relaxed">
+        El número de serie detectado pertenece a un rango inhabilitado por el BCB.
+      </p>
+      <button class="clear-btn w-full bg-[#F2F2F7] text-black font-bold py-4 rounded-xl transition-all active:scale-95 text-sm uppercase">
+        Limpiar Interfaz
+      </button>
+    </div>
+  </div>
+
+  <div class="info-box">
+    Denominaciones afectadas (Serie B):
+    <span class="tag tag-10">Bs 10</span>
+    <span class="tag tag-20">Bs 20</span>
+    <span class="tag tag-50">Bs 50</span><br><br>
+    Verificá también en: <a href="https://www.bcb.gob.bo" target="_blank">bcb.gob.bo</a><br>
+    Fuente: Banco Central de Bolivia · Comunicado 27/02/2026
+  </div>
+
+  <div style="text-align:center; font-size:10px; color:var(--muted); margin-top:20px; font-family:'DM Mono',monospace;">
+    v1.9-debug
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js"></script>
+<script src="app.js"></script>
 </body>
 </html>
