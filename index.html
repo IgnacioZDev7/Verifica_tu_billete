@@ -107,6 +107,7 @@
       <span class="material-symbols-outlined">check</span>
     </div>
     <h3 class="modal-title">BILLETE HABILITADO</h3>
+    <div class="modal-serial-tag" id="modal-success-serial">-</div>
     <p class="modal-subtitle">Serie verificada con éxito</p>
     <p class="modal-desc" id="modal-success-desc">
       Este billete NO está en ningún rango inhabilitado y puede circular con normalidad.
@@ -122,6 +123,7 @@
       <span class="material-symbols-outlined">report</span>
     </div>
     <h3 class="modal-title" id="modal-error-title">BILLETE NO VÁLIDO</h3>
+    <div class="modal-serial-tag" id="modal-error-serial">-</div>
     <div style="background:#E74C3C; padding:4px 12px; border-radius:6px; margin-bottom:15px">
       <p class="modal-subtitle" style="margin-bottom:0; color:white; font-size:10px">Serie Restringida</p>
     </div>
@@ -132,6 +134,22 @@
       <button class="modal-btn-clear" onclick="closeModals()">LIMPIAR INTERFAZ</button>
       <button class="modal-btn-report" onclick="reportIncidence()">REPORTAR INCIDENCIA</button>
     </div>
+  </div>
+</div>
+
+<!-- MODAL DE ADVERTENCIA -->
+<div id="modal-warning" class="modal-overlay">
+  <div class="modal-card warning">
+    <div class="modal-icon-hex">
+      <span class="material-symbols-outlined">warning</span>
+    </div>
+    <h3 class="modal-title">ATENCIÓN</h3>
+    <div class="modal-serial-tag" id="modal-warning-serial">NO DETECTADA</div>
+    <p class="modal-subtitle">Detección Incompleta</p>
+    <p class="modal-desc" id="modal-warning-desc">
+      No se pudo extraer texto claro de la serie. Recomendamos acercar más el billete o ingresarlo manualmente.
+    </p>
+    <button class="modal-btn-clear" onclick="closeModals()">REINTENTAR</button>
   </div>
 </div>
 </body>

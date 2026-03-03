@@ -68,27 +68,34 @@ function parsearSerie(raw) {
 // ────────────────────────────────────────────────────────────
 // HELPERS DE UI
 // ────────────────────────────────────────────────────────────
-function showResult(label, status, desc) {
+function showResult(label, status, desc, serial = '') {
   const modalSuccess = document.getElementById('modal-success');
   const modalError   = document.getElementById('modal-error');
+  const modalWarning = document.getElementById('modal-warning');
   
-  // Ocultamos el resto si es exitoso o error
+  // Ocultamos todos primero
+  closeModals(false);
+
   if (status === 'ok') {
     document.getElementById('modal-success-desc').textContent = desc;
+    document.getElementById('modal-success-serial').textContent = serial || label;
     modalSuccess.classList.add('active');
   } else if (status === 'bad') {
     document.getElementById('modal-error-desc').textContent = desc;
+    document.getElementById('modal-error-serial').textContent = serial || label;
     modalError.classList.add('active');
-  } else {
-    // Si es warn (informativo), usamos la tarjeta normal por ahora o alert
-    alert('AVISO: ' + desc);
+  } else if (status === 'warn') {
+    document.getElementById('modal-warning-desc').textContent = desc;
+    document.getElementById('modal-warning-serial').textContent = serial || 'NO DETECTADA';
+    modalWarning.classList.add('active');
   }
 }
 
-window.closeModals = function() {
+window.closeModals = function(clearInput = true) {
   document.getElementById('modal-success').classList.remove('active');
   document.getElementById('modal-error').classList.remove('active');
-  document.getElementById('serieInput').value = '';
+  document.getElementById('modal-warning').classList.remove('active');
+  if (clearInput) document.getElementById('serieInput').value = '';
 };
 
 window.reportIncidence = function() {
@@ -132,12 +139,14 @@ async function verificar(serieRaw, denominacion) {
         serieRaw, 'bad',
         `Billete INHABILITADO. Pertenece al rango ${hit.serie}${hit.numero_inicio}–` +
         `${hit.serie}${hit.numero_fin} (Bs ${hit.denominacion}). ` +
-        `Fue sustraído en el accidente de El Alto. No debe circular.`
+        `Fue sustraído en el accidente de El Alto. No debe circular.`,
+        `${parsed.serie}${parsed.numero}`
       );
     } else {
       showResult(
         serieRaw, 'ok',
-        'Este billete NO está en ningún rango inhabilitado y puede circular con normalidad.'
+        'Este billete NO está en ningún rango inhabilitado y puede circular con normalidad.',
+        `${parsed.serie}${parsed.numero}`
       );
     }
   } catch (err) {
@@ -274,7 +283,9 @@ async function processImage(blob) {
     if (!serial) {
       showResult('—', 'warn',
         'No se pudo extraer texto claro de la serie. ' +
-        'Recomendación: Acercá más el billete al recuadro o ingresalo manualmente.');
+        'Recomendación: Acercá más el billete al recuadro o ingresalo manualmente.',
+        'S/N'
+      );
       return;
     }
 
@@ -297,8 +308,7 @@ async function processImage(blob) {
     // Evitar que el mensaje final sea literalmente "undefined"
     if (errorMsg === 'undefined' || !errorMsg) errorMsg = 'Error de procesamiento interno';
 
-    showResult('—', 'warn', 'v1.9 Error: ' + errorMsg);
-    alert('DEBUG v1.9: ' + errorMsg);
+    showResult('—', 'warn', 'v1.9 Error: ' + errorMsg, 'ERR');
   }
 }
 
