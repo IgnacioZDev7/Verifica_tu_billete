@@ -5,21 +5,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>UNIFRANZ — Validador de Billetes</title>
 <link rel="stylesheet" href="assets/css/style.css">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
 </head>
 <body>
 
 <header>
-  <div class="logo-row">
-    <div class="logo-badge">Bs</div>
-    <h1 style="text-transform: uppercase;">Unifranz <span>Validador de Billetes</span></h1>
+  <div class="title-wrap">
+    <div class="university-name">UNIFRANZ</div>
+    <h1 class="app-title">VALIDADOR DE <span>BILLETES</span></h1>
   </div>
-  <p class="subtitle">// billetes inhabilitados · accidente El Alto · feb 2026</p>
 </header>
-
-<div class="alert-banner">
-  ⚠ Solo los billetes de la Serie B de Bs 10, Bs 20 y Bs 50 con numeración dentro
-  de los rangos sustraídos carecen de valor legal. Verificá antes de aceptar.
-</div>
 
 <div class="main">
 
@@ -38,22 +33,33 @@
       </div>
     </div>
     <div class="controls">
-      <button class="btn btn-primary" id="btnCamera">📷 Activar cámara</button>
-      <button class="btn btn-secondary" id="btnCapture" disabled>⚡ Capturar</button>
-      <button class="btn btn-secondary" id="btnUpload">🖼 Subir imagen</button>
-      <input type="file" id="fileInput" accept="image/*">
+      <button class="btn btn-primary scan-action-btn" id="btnCamera">
+        <svg class="scan-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 7V5a2 2 0 0 1 2-2h2"></path>
+          <path d="M17 3h2a2 2 0 0 1 2 2v2"></path>
+          <path d="M21 17v2a2 2 0 0 1-2 2h-2"></path>
+          <path d="M7 21H5a2 2 0 0 1-2-2v-2"></path>
+          <rect x="7" y="7" width="10" height="10" rx="2"></rect>
+        </svg>
+        ESCANEAR
+      </button>
+      <button class="btn btn-secondary capture-action-btn" id="btnCapture" disabled>
+        ⚡ CAPTURAR
+      </button>
+      <input type="file" id="fileInput" accept="image/*" style="display:none">
+    </div>
+
+    <!-- Nuevos botones de denominación -->
+    <div class="denom-buttons" style="padding: 0 14px 14px;">
+      <button class="denom-btn denom-btn-10" data-value="10">Bs 10</button>
+      <button class="denom-btn denom-btn-20" data-value="20">Bs 20</button>
+      <button class="denom-btn denom-btn-50 active" data-value="50">Bs 50</button>
     </div>
   </div>
 
   <div class="manual-section">
-    <div class="section-label">Ingresar manualmente</div>
+    <div class="section-label">INGRESO MANUAL</div>
     <div class="input-row">
-      <select class="denom-select" id="denomSelect">
-        <option value="">Bs.</option>
-        <option value="10">Bs 10</option>
-        <option value="20">Bs 20</option>
-        <option value="50">Bs 50</option>
-      </select>
       <input class="serie-input" id="serieInput" type="text"
              placeholder="Ej: 043773774 B" maxlength="12">
       <button class="btn btn-primary" id="btnVerify" style="flex:0.6">Verificar</button>
@@ -77,20 +83,56 @@
   </div>
 
   <div class="info-box">
-    Denominaciones afectadas (Serie B):
-    <span class="tag tag-10">Bs 10</span>
-    <span class="tag tag-20">Bs 20</span>
-    <span class="tag tag-50">Bs 50</span><br><br>
-    Verificá también en: <a href="https://www.bcb.gob.bo" target="_blank">bcb.gob.bo</a><br>
-    Fuente: Banco Central de Bolivia · Comunicado 27/02/2026
+    <div class="affected-row">
+      Denominaciones afectadas (Serie B): 
+      <b class="color-10">Bs 10</b>, 
+      <b class="color-20">Bs 20</b>, 
+      <b class="color-50">Bs 50</b>.
+    </div>
+    <div class="source-text">Fuente: Banco Central de Bolivia · Comunicado 27/02/2026</div>
   </div>
 
   <div style="text-align:center; font-size:10px; color:var(--muted); margin-top:20px; font-family:'DM Mono',monospace;">
-    v1.9-debug
+    v1.9 - Ingeniería de Sistemas UNIFRANZ - Comunidad de Desarrollo de Software
   </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js"></script>
 <script src="assets/js/app.js"></script>
+
+<!-- MODAL DE ÉXITO -->
+<div id="modal-success" class="modal-overlay">
+  <div class="modal-card success">
+    <div class="modal-icon-hex">
+      <span class="material-symbols-outlined">check</span>
+    </div>
+    <h3 class="modal-title">BILLETE HABILITADO</h3>
+    <p class="modal-subtitle">Serie verificada con éxito</p>
+    <p class="modal-desc" id="modal-success-desc">
+      Este billete NO está en ningún rango inhabilitado y puede circular con normalidad.
+    </p>
+    <button class="modal-btn-clear" onclick="closeModals()">LIMPIAR INTERFAZ</button>
+  </div>
+</div>
+
+<!-- MODAL DE ERROR -->
+<div id="modal-error" class="modal-overlay">
+  <div class="modal-card error">
+    <div class="modal-icon-hex">
+      <span class="material-symbols-outlined">report</span>
+    </div>
+    <h3 class="modal-title" id="modal-error-title">BILLETE NO VÁLIDO</h3>
+    <div style="background:#E74C3C; padding:4px 12px; border-radius:6px; margin-bottom:15px">
+      <p class="modal-subtitle" style="margin-bottom:0; color:white; font-size:10px">Serie Restringida</p>
+    </div>
+    <p class="modal-desc" id="modal-error-desc">
+      El número de serie detectado no coincide con los estándares de emisión vigentes del Banco Central.
+    </p>
+    <div style="width:100%">
+      <button class="modal-btn-clear" onclick="closeModals()">LIMPIAR INTERFAZ</button>
+      <button class="modal-btn-report" onclick="reportIncidence()">REPORTAR INCIDENCIA</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>

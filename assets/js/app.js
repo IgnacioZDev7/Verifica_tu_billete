@@ -5,7 +5,8 @@ const SUPABASE_URL      = "https://lwuhrcxsreoshhtezybd.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx3dWhyY3hzcmVvc2hodGV6eWJkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI0MTQyNzEsImV4cCI6MjA4Nzk5MDI3MX0.Jb5qDfSY6_rgbjvb_usHsJXas9mDDKzSrXvkZ6zGVfk";
 const CLAUDE_API_KEY    = ""; // opcional — dejalo vacío si no lo tenés aún
 // ============================================================
-console.log('%c Verificador BCB v1.9 cargado ', 'background: #c9a84c; color: #000; font-weight: bold;');
+console.log('%c Verificador BCB v2.0 cargado ', 'background: #F37021; color: #fff; font-weight: bold;');
+let selectedDenom = "50"; // Valor por defecto
 
 
 // ────────────────────────────────────────────────────────────
@@ -68,17 +69,32 @@ function parsearSerie(raw) {
 // HELPERS DE UI
 // ────────────────────────────────────────────────────────────
 function showResult(label, status, desc) {
-  const card = document.getElementById('resultCard');
-  card.className = 'result-card ' + status;
-  document.getElementById('resultSerie').textContent  = label.toUpperCase();
-  document.getElementById('resultDesc').textContent   = desc;
-  document.getElementById('resultStatus').textContent = {
-    ok:   '✅ HABILITADO',
-    bad:  '❌ INHABILITADO',
-    warn: '⚠️ VERIFICAR'
-  }[status];
-  card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  const modalSuccess = document.getElementById('modal-success');
+  const modalError   = document.getElementById('modal-error');
+  
+  // Ocultamos el resto si es exitoso o error
+  if (status === 'ok') {
+    document.getElementById('modal-success-desc').textContent = desc;
+    modalSuccess.classList.add('active');
+  } else if (status === 'bad') {
+    document.getElementById('modal-error-desc').textContent = desc;
+    modalError.classList.add('active');
+  } else {
+    // Si es warn (informativo), usamos la tarjeta normal por ahora o alert
+    alert('AVISO: ' + desc);
+  }
 }
+
+window.closeModals = function() {
+  document.getElementById('modal-success').classList.remove('active');
+  document.getElementById('modal-error').classList.remove('active');
+  document.getElementById('serieInput').value = '';
+};
+
+window.reportIncidence = function() {
+  alert('Incidencia reportada correctamente al sistema de seguridad.');
+  closeModals();
+};
 
 function setProcessing(on, msg = '') {
   document.getElementById('processing').classList.toggle('active', on);
@@ -215,7 +231,7 @@ async function processImage(blob) {
   document.getElementById('debugBox').classList.remove('active');
   document.getElementById('resultCard').className = 'result-card';
 
-  const denom = document.getElementById('denomSelect').value;
+  const denom = selectedDenom;
 
   try {
     console.log('Procesando imagen, tamaño:', blob.size, 'tipo:', blob.type);
@@ -292,9 +308,50 @@ async function processImage(blob) {
 // ────────────────────────────────────────────────────────────
 let stream = null;
 let track = null;
+let torchOn = false;
 const video = document.getElementById('video');
 
-document.getElementById('btnCamera').addEventListener('click', async () => {
+document.addEventListener('DOMContentLoaded', () => {
+  // Manejo de botones de denominación
+  document.querySelectorAll('.denom-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.denom-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      selectedDenom = btn.getAttribute('data-value');
+      console.log('Denominación seleccionada:', selectedDenom);
+    });
+  });
+
+  document.getElementById('btnVerify').addEventListener('click', () => {
+    verificar(document.getElementById('serieInput').value.trim(), selectedDenom);
+  });
+
+  document.getElementById('serieInput').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') document.getElementById('btnVerify').click();
+  });
+
+  document.getElementById('btnCamera').addEventListener('click', handleCamera);
+
+  document.getElementById('btnCapture').addEventListener('click', () => {
+    if (video.videoWidth === 0 || video.videoHeight === 0) {
+      alert('La cámara aún no está lista. Esperá un momento.');
+      return;
+    }
+    const canvas = document.createElement('canvas');
+    canvas.width  = video.videoWidth;
+    canvas.height = video.videoHeight;
+    canvas.getContext('2d').drawImage(video, 0, 0);
+    canvas.toBlob(blob => processImage(blob), 'image/jpeg', 0.95);
+  });
+
+  document.getElementById('fileInput').addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (file) processImage(file);
+    e.target.value = ''; 
+  });
+});
+
+async function handleCamera() {
   const btn = document.getElementById('btnCamera');
 
   if (stream) {
@@ -302,7 +359,15 @@ document.getElementById('btnCamera').addEventListener('click', async () => {
     stream.getTracks().forEach(t => t.stop());
     stream = null;
     video.srcObject = null;
-    btn.textContent = '📷 Activar cámara';
+    btn.innerHTML = `
+      <svg class="scan-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 7V5a2 2 0 0 1 2-2h2"></path>
+        <path d="M17 3h2a2 2 0 0 1 2 2v2"></path>
+        <path d="M21 17v2a2 2 0 0 1-2 2h-2"></path>
+        <path d="M7 21H5a2 2 0 0 1-2-2v-2"></path>
+        <rect x="7" y="7" width="10" height="10" rx="2"></rect>
+      </svg> ESCANEAR`;
+    btn.classList.remove('active-stop');
     document.getElementById('btnCapture').disabled = true;
     document.getElementById('scannerFrame').style.display = 'none';
     document.getElementById('labelOverlay').style.display = 'none';
@@ -310,7 +375,7 @@ document.getElementById('btnCamera').addEventListener('click', async () => {
     return;
   }
 
-  // Encender cámara (pide permiso al usuario)
+  // Encender cámara
   setProcessing(true, 'Iniciando cámara...');
   try {
     const constraints = [
@@ -334,8 +399,8 @@ document.getElementById('btnCamera').addEventListener('click', async () => {
 
     video.srcObject = stream;
     
-    // Intentar reproducir directamente
-    btn.textContent = '🛑 Detener cámara';
+    btn.innerHTML = `🛑 DETENER`;
+    btn.classList.add('active-stop');
     document.getElementById('btnCapture').disabled = false;
     document.getElementById('scannerFrame').style.display = 'flex';
     document.getElementById('labelOverlay').style.display = 'block';
@@ -348,7 +413,6 @@ document.getElementById('btnCamera').addEventListener('click', async () => {
       video.onloadedmetadata = () => video.play().catch(e => console.error('Fallo final video.play():', e));
     }
     
-    // Esperar un poco para detectar flash
     setTimeout(() => {
       try {
         track = stream.getVideoTracks()[0];
@@ -369,58 +433,4 @@ document.getElementById('btnCamera').addEventListener('click', async () => {
   } finally {
     setProcessing(false);
   }
-});
-
-let torchOn = false;
-document.getElementById('btnFlash').addEventListener('click', async () => {
-  if (!track) return;
-  try {
-    torchOn = !torchOn;
-    await track.applyConstraints({ advanced: [{ torch: torchOn }] });
-    document.getElementById('btnFlash').textContent = torchOn ? '🔦 Flash On' : '🔦 Flash Off';
-  } catch (e) {
-    console.warn('No se pudo activar el flash:', e);
-  }
-});
-
-document.getElementById('btnCapture').addEventListener('click', () => {
-  if (video.videoWidth === 0 || video.videoHeight === 0) {
-    alert('La cámara aún no está lista. Esperá un momento.');
-    return;
-  }
-  const canvas = document.createElement('canvas');
-  canvas.width  = video.videoWidth;
-  canvas.height = video.videoHeight;
-  canvas.getContext('2d').drawImage(video, 0, 0);
-  canvas.toBlob(blob => processImage(blob), 'image/jpeg', 0.95);
-});
-
-
-// ────────────────────────────────────────────────────────────
-// SUBIR IMAGEN DESDE GALERÍA
-// ────────────────────────────────────────────────────────────
-document.getElementById('btnUpload').addEventListener('click', () => {
-  document.getElementById('fileInput').click();
-});
-
-document.getElementById('fileInput').addEventListener('change', (e) => {
-  const file = e.target.files[0];
-  if (file) processImage(file);
-  e.target.value = ''; // reset para poder subir el mismo archivo dos veces
-});
-
-
-// ────────────────────────────────────────────────────────────
-// VERIFICACIÓN MANUAL
-// ────────────────────────────────────────────────────────────
-document.getElementById('btnVerify').addEventListener('click', () => {
-  verificar(
-    document.getElementById('serieInput').value.trim(),
-    document.getElementById('denomSelect').value
-  );
-});
-
-// También funciona presionando Enter desde el input
-document.getElementById('serieInput').addEventListener('keydown', (e) => {
-  if (e.key === 'Enter') document.getElementById('btnVerify').click();
-});
+}
