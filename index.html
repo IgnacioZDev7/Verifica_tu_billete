@@ -44,7 +44,10 @@
         </div>
         <div class="flex flex-col items-center">
             <span class="text-xs font-bold tracking-widest text-unifranz-orange uppercase">UNIFRANZ</span>
-            <span class="text-[10px] text-white/60 uppercase tracking-tighter">Validador de Billetes</span>
+            <div id="status-badge" class="flex items-center gap-1 mt-1">
+                <span class="size-1.5 rounded-full bg-white/20" id="status-dot"></span>
+                <span id="status-text" class="text-[8px] text-white/40 uppercase tracking-tighter">Cámara no iniciada</span>
+            </div>
         </div>
         <div class="w-10 flex justify-end">
             <span class="material-symbols-outlined text-white">account_circle</span>
@@ -57,10 +60,10 @@
             <div class="w-full h-full relative border-2 border-unifranz-orange/40 rounded-lg overflow-hidden neon-glow">
                 <div class="absolute inset-0 bg-unifranz-orange/5"></div>
                 <!-- Marcadores de Esquina -->
-                <div class="absolute top-0 left-0 w-6 h-6 border-t-2 border-l-2 border-unifranz-orange"></div>
-                <div class="absolute top-0 right-0 w-6 h-6 border-t-2 border-r-2 border-unifranz-orange"></div>
-                <div class="absolute bottom-0 left-0 w-6 h-6 border-b-2 border-l-2 border-unifranz-orange"></div>
-                <div class="absolute bottom-0 right-0 w-6 h-6 border-b-2 border-r-2 border-unifranz-orange"></div>
+                <div class="absolute top-0 left-0 w-8 h-8 border-t-4 border-l-4 border-unifranz-orange rounded-tl-lg z-20"></div>
+                <div class="absolute top-0 right-0 w-8 h-8 border-t-4 border-r-4 border-unifranz-orange rounded-tr-lg z-20"></div>
+                <div class="absolute bottom-0 left-0 w-8 h-8 border-b-4 border-l-4 border-unifranz-orange rounded-bl-lg z-20"></div>
+                <div class="absolute bottom-0 right-0 w-8 h-8 border-b-4 border-r-4 border-unifranz-orange rounded-br-lg z-20"></div>
                 
                 <!-- Animación de Escaneo -->
                 <div class="scanning-line"></div>

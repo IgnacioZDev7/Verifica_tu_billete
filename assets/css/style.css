@@ -58,7 +58,26 @@ body {
 
 /* Material Symbols Adjustments */
 .material-symbols-outlined {
-    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 40;
+}
+
+video {
+    background: #000;
+    z-index: 10 !important;
+    transform: translateZ(0); /* Force GPU */
+}
+
+.scanning-line {
+    z-index: 30;
+}
+
+.neon-glow {
+    position: relative;
+    z-index: 5;
+}
+
+.scanner-marks {
+    z-index: 40;
 }
 
 .fill-icon {

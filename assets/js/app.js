@@ -28,11 +28,26 @@ document.addEventListener('DOMContentLoaded', () => {
     const successDescTxt = document.getElementById('success-desc');
     const errorSerieTxt = document.getElementById('error-serie');
     const errorDescTxt = document.getElementById('error-desc');
+    
+    const statusText = document.getElementById('status-text');
+    const statusDot = document.getElementById('status-dot');
 
     let selectedDenom = null;
     let stream = null;
     let track = null;
     let torchOn = false;
+
+    // --- Helpers de Estado ---
+    function setStatus(msg, type = 'default') {
+        statusText.textContent = msg;
+        statusDot.className = 'size-1.5 rounded-full ' + {
+            default: 'bg-white/20',
+            loading: 'bg-unifranz-orange animate-pulse',
+            active: 'bg-green-500 shadow-[0_0_8px_#2ecc71]',
+            error: 'bg-alert-red shadow-[0_0_8px_#e74c3c]'
+        }[type];
+        console.log(`[STATUS] ${msg}`);
+    }
 
     // --- Lógica de Denominación ---
     denomButtons.forEach(btn => {
@@ -123,8 +138,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Lógica de Cámara ---
     async function startCamera() {
+        setStatus('Accediendo a cámara...', 'loading');
+        
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+            setStatus('Navegador incompatible', 'error');
+            alert('Tu navegador no soporta el acceso a la cámara o estás en una conexión no segura (HTTP).');
+            return;
+        }
+
         const constraints = [
             { video: { facingMode: 'environment', width: { ideal: 1280 }, height: { ideal: 720 } } },
+            { video: { facingMode: { exact: 'environment' } } },
             { video: { facingMode: 'environment' } },
             { video: true }
         ];
@@ -132,9 +156,12 @@ document.addEventListener('DOMContentLoaded', () => {
         let lastErr = null;
         for (const constraint of constraints) {
             try {
-                console.log('Intentando cámara con:', constraint);
+                setStatus(`Iniciando lente...`, 'loading');
                 stream = await navigator.mediaDevices.getUserMedia(constraint);
-                if (stream) break;
+                if (stream) {
+                    setStatus('Lente conectado', 'active');
+                    break;
+                }
             } catch (err) {
                 lastErr = err;
                 console.warn('Falla con restricción:', constraint, err);
@@ -143,27 +170,36 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (!stream) {
             const errorMsg = lastErr ? (lastErr.message || lastErr.name || JSON.stringify(lastErr)) : 'Error desconocido';
-            console.error('Error final cámara:', errorMsg);
+            setStatus('Error de acceso', 'error');
             alert('No se pudo acceder a la cámara: ' + errorMsg);
             return;
         }
 
         try {
             video.srcObject = stream;
-            // Forzar reproducción y manejo de errores
-            await video.play();
             
-            scanBtn.classList.add('hidden');
-            captureBtn.classList.remove('hidden');
-            
+            // Evento para asegurar que el video realmente carga
+            video.onloadedmetadata = () => {
+                video.play()
+                    .then(() => {
+                        setStatus('Cámara activa', 'active');
+                        scanBtn.classList.add('hidden');
+                        captureBtn.classList.remove('hidden');
+                    })
+                    .catch(e => {
+                        setStatus('Error reproducción', 'error');
+                        console.error('video.play() falló:', e);
+                    });
+            };
+
             track = stream.getVideoTracks()[0];
             if (track && track.getCapabilities) {
                 const caps = track.getCapabilities();
                 if (caps.torch) flashBtn.style.display = 'flex';
             }
         } catch (err) {
-            console.error('Error al reproducir video:', err);
-            alert('Error al reproducir video: ' + err.message);
+            setStatus('Error de sistema', 'error');
+            console.error('Error al configurar video:', err);
         }
     }
 
