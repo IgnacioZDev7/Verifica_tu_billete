@@ -1,0 +1,71 @@
+:root {
+    --unifranz-orange: #F37021;
+    --bs-10: #00CED1;
+    --bs-20: #FF8C00;
+    --bs-50: #8A2BE2;
+    --background-pure: #000000;
+    --alert-red: #E74C3C;
+    --success-green: #2ecc71;
+}
+
+body {
+    min-height: 100dvh;
+    font-family: 'Space Grotesk', sans-serif;
+}
+
+/* Glassmorphism Panels */
+.glass-panel {
+    background: rgba(25, 25, 25, 0.6);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(243, 112, 33, 0.2);
+}
+
+.glass-button {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Animations */
+.scanning-line {
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--unifranz-orange), transparent);
+    box-shadow: 0 0 15px var(--unifranz-orange);
+    width: 100%;
+    position: absolute;
+    top: 50%;
+    animation: scan 3s ease-in-out infinite;
+}
+
+@keyframes scan {
+    0%, 100% { top: 5%; }
+    50% { top: 95%; }
+}
+
+.neon-glow {
+    box-shadow: 0 0 15px rgba(243, 112, 33, 0.4);
+}
+
+.neon-glow-success {
+    box-shadow: 0 0 30px rgba(46, 204, 111, 0.4);
+}
+
+.neon-glow-error {
+    box-shadow: 0 0 30px rgba(231, 76, 60, 0.4);
+}
+
+/* Material Symbols Adjustments */
+.material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+
+.fill-icon {
+    font-variation-settings: 'FILL' 1;
+}
+
+/* Utility for dynamic height */
+.min-h-custom {
+    min-height: max(884px, 100dvh);
+}
