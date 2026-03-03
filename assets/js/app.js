@@ -54,12 +54,20 @@ function parsearSerie(raw) {
   // Formato 1: Letra al principio (B12345678)
   const matchPrincipio = limpio.match(/^([A-Z]+)(\d+)$/);
   if (matchPrincipio) {
-    return { serie: matchPrincipio[1], numero: parseInt(matchPrincipio[2], 10) };
+    return { 
+      serie: matchPrincipio[1], 
+      numero: parseInt(matchPrincipio[2], 10),
+      numStr: matchPrincipio[2]
+    };
   }
   // Formato 2: Letra al final (043773774 B)
   const matchFinal = limpio.match(/^(\d+)([A-Z]+)$/);
   if (matchFinal) {
-    return { serie: matchFinal[2], numero: parseInt(matchFinal[1], 10) };
+    return { 
+      serie: matchFinal[2], 
+      numero: parseInt(matchFinal[1], 10),
+      numStr: matchFinal[1]
+    };
   }
   return null;
 }
@@ -140,13 +148,13 @@ async function verificar(serieRaw, denominacion) {
         `Billete INHABILITADO. Pertenece al rango ${hit.serie}${hit.numero_inicio}–` +
         `${hit.serie}${hit.numero_fin} (Bs ${hit.denominacion}). ` +
         `Fue sustraído en el accidente de El Alto. No debe circular.`,
-        `${parsed.serie}${parsed.numero}`
+        `${parsed.numStr} ${parsed.serie}`
       );
     } else {
       showResult(
         serieRaw, 'ok',
         'Este billete NO está en ningún rango inhabilitado y puede circular con normalidad.',
-        `${parsed.serie}${parsed.numero}`
+        `${parsed.numStr} ${parsed.serie}`
       );
     }
   } catch (err) {
