@@ -123,21 +123,47 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Lógica de Cámara ---
     async function startCamera() {
+        const constraints = [
+            { video: { facingMode: 'environment', width: { ideal: 1280 }, height: { ideal: 720 } } },
+            { video: { facingMode: 'environment' } },
+            { video: true }
+        ];
+
+        let lastErr = null;
+        for (const constraint of constraints) {
+            try {
+                console.log('Intentando cámara con:', constraint);
+                stream = await navigator.mediaDevices.getUserMedia(constraint);
+                if (stream) break;
+            } catch (err) {
+                lastErr = err;
+                console.warn('Falla con restricción:', constraint, err);
+            }
+        }
+
+        if (!stream) {
+            const errorMsg = lastErr ? (lastErr.message || lastErr.name || JSON.stringify(lastErr)) : 'Error desconocido';
+            console.error('Error final cámara:', errorMsg);
+            alert('No se pudo acceder a la cámara: ' + errorMsg);
+            return;
+        }
+
         try {
-            stream = await navigator.mediaDevices.getUserMedia({ 
-                video: { facingMode: 'environment', width: { ideal: 1280 }, height: { ideal: 720 } } 
-            });
             video.srcObject = stream;
+            // Forzar reproducción y manejo de errores
+            await video.play();
+            
             scanBtn.classList.add('hidden');
             captureBtn.classList.remove('hidden');
             
             track = stream.getVideoTracks()[0];
-            if (track && track.getCapabilities && track.getCapabilities().torch) {
-                flashBtn.style.display = 'flex';
+            if (track && track.getCapabilities) {
+                const caps = track.getCapabilities();
+                if (caps.torch) flashBtn.style.display = 'flex';
             }
         } catch (err) {
-            console.error('Error cámara:', err);
-            alert('No se pudo acceder a la cámara.');
+            console.error('Error al reproducir video:', err);
+            alert('Error al reproducir video: ' + err.message);
         }
     }
 
