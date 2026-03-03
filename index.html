@@ -58,26 +58,29 @@
         <!-- Area de Escaneo -->
         <div class="flex-grow relative flex items-center justify-center py-2 min-h-[40vh]">
             <div class="w-full h-full relative border-2 border-unifranz-orange/40 rounded-lg overflow-hidden neon-glow">
-                <div class="absolute inset-0 bg-unifranz-orange/5"></div>
-                <!-- Marcadores de Esquina -->
-                <div class="absolute top-0 left-0 w-8 h-8 border-t-4 border-l-4 border-unifranz-orange rounded-tl-lg z-20"></div>
-                <div class="absolute top-0 right-0 w-8 h-8 border-t-4 border-r-4 border-unifranz-orange rounded-tr-lg z-20"></div>
-                <div class="absolute bottom-0 left-0 w-8 h-8 border-b-4 border-l-4 border-unifranz-orange rounded-bl-lg z-20"></div>
-                <div class="absolute bottom-0 right-0 w-8 h-8 border-b-4 border-r-4 border-unifranz-orange rounded-br-lg z-20"></div>
+                <!-- Capa 1: Video -->
+                <video id="video" autoplay playsinline muted class="absolute inset-0 w-full h-full"></video>
                 
-                <!-- Animación de Escaneo -->
+                <!-- Capa 2: Gradiente de enfoque -->
+                <div class="scanner-overlay"></div>
+                
+                <!-- Capa 3: Marcadores y Animación -->
+                <div class="absolute top-0 left-0 w-8 h-8 border-t-4 border-l-4 border-unifranz-orange rounded-tl-lg scanner-marks"></div>
+                <div class="absolute top-0 right-0 w-8 h-8 border-t-4 border-r-4 border-unifranz-orange rounded-tr-lg scanner-marks"></div>
+                <div class="absolute bottom-0 left-0 w-8 h-8 border-b-4 border-l-4 border-unifranz-orange rounded-bl-lg scanner-marks"></div>
+                <div class="absolute bottom-0 right-0 w-8 h-8 border-b-4 border-r-4 border-unifranz-orange rounded-br-lg scanner-marks"></div>
                 <div class="scanning-line"></div>
                 
-                <video id="video" autoplay playsinline muted class="absolute inset-0 w-full h-full object-cover"></video>
-                
-                <div class="absolute top-4 right-4 z-10">
-                    <button id="btnFlash" class="glass-button w-12 h-12 rounded-full flex items-center justify-center text-white active:text-unifranz-orange transition-colors" style="display:none">
+                <!-- Controles sobre el video -->
+                <div class="absolute top-4 right-4 z-50">
+                    <button id="btnFlash" class="glass-button w-12 h-12 rounded-full flex items-center justify-center text-white active:text-unifranz-orange transition-colors" style="display:none; background: rgba(0,0,0,0.4); backdrop-filter: blur(5px); border: 1px solid rgba(255,255,255,0.1);">
                         <span class="material-symbols-outlined text-2xl">flashlight_on</span>
                     </button>
                 </div>
+                
                 <!-- Texto Guía -->
-                <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
-                    <p class="text-[10px] uppercase tracking-[0.2em] text-unifranz-orange font-medium px-4 text-center">Alinee el billete dentro de la zona</p>
+                <div class="absolute inset-0 flex items-end justify-center pointer-events-none pb-6 z-50">
+                    <p class="text-[9px] uppercase tracking-[0.2em] text-unifranz-orange font-bold bg-black/40 px-3 py-1 rounded-full backdrop-blur-sm">Alinee el número de serie</p>
                 </div>
             </div>
         </div>

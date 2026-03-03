@@ -178,19 +178,27 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             video.srcObject = stream;
             
-            // Evento para asegurar que el video realmente carga
+            // Forzar actualización de UI y reproducción
             video.onloadedmetadata = () => {
-                video.play()
-                    .then(() => {
-                        setStatus('Cámara activa', 'active');
-                        scanBtn.classList.add('hidden');
-                        captureBtn.classList.remove('hidden');
-                    })
-                    .catch(e => {
-                        setStatus('Error reproducción', 'error');
-                        console.error('video.play() falló:', e);
-                    });
+                console.log('Video metadata:', video.videoWidth, 'x', video.videoHeight);
+                setStatus(`Señal: ${video.videoWidth}p`, 'loading');
+                
+                video.play().then(() => {
+                    setStatus('Cámara activa', 'active');
+                    scanBtn.classList.add('hidden');
+                    captureBtn.classList.remove('hidden');
+                }).catch(e => {
+                    console.error('Error play:', e);
+                    setStatus('Error de reproducción', 'error');
+                });
             };
+            
+            // Fallback si onloadedmetadata no dispara
+            setTimeout(() => {
+                if (video.paused && stream) {
+                    video.play().catch(console.error);
+                }
+            }, 1000);
 
             track = stream.getVideoTracks()[0];
             if (track && track.getCapabilities) {
