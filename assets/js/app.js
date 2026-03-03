@@ -22,7 +22,6 @@ async function consultarSupabase(serie, numero, denominacion) {
   const url = new URL(`${SUPABASE_URL}/rest/v1/billetes_inhabilitados`);
   url.searchParams.set("select",        "id,serie,numero_inicio,numero_fin,denominacion");
   url.searchParams.set("serie",         `eq.${serie.toUpperCase()}`);
-  url.searchParams.set("denominacion",  `eq.${denominacion}`);
   url.searchParams.set("numero_inicio", `lte.${numero}`); // el rango empieza ANTES
   url.searchParams.set("numero_fin",    `gte.${numero}`); // el rango termina DESPUÉS
   url.searchParams.set("limit",         "1");
@@ -143,11 +142,18 @@ async function verificar(serieRaw, denominacion) {
     setProcessing(false);
 
     if (hit) {
+      const denomSeleccionada = parseInt(denominacion);
+      let mensajeError = `Billete INHABILITADO. Pertenece al rango ${hit.serie}${hit.numero_inicio}–` +
+        `${hit.serie}${hit.numero_fin} (Bs ${hit.denominacion}). ` +
+        `Fue sustraído en el accidente de El Alto. No debe circular.`;
+      
+      if (hit.denominacion !== denomSeleccionada) {
+        mensajeError += `\n\n⚠️ NOTA: El sistema detectó este robo para un billete de Bs ${hit.denominacion}, pero seleccionaste Bs ${denomSeleccionada}.`;
+      }
+
       showResult(
         serieRaw, 'bad',
-        `Billete INHABILITADO. Pertenece al rango ${hit.serie}${hit.numero_inicio}–` +
-        `${hit.serie}${hit.numero_fin} (Bs ${hit.denominacion}). ` +
-        `Fue sustraído en el accidente de El Alto. No debe circular.`,
+        mensajeError,
         `${parsed.numStr} ${parsed.serie}`
       );
     } else {
