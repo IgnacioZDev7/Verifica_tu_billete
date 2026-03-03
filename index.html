@@ -4,76 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Verificador BCB — Billetes Bolivia</title>
-<style>
-  @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Mono:wght@400;500&display=swap');
-  :root {
-    --bg:#0a0a0f; --surface:#12121a; --border:#1e1e2e;
-    --ok:#00e57a; --bad:#ff3b5c; --warn:#ffc233;
-    --text:#e8e8f0; --muted:#5a5a7a; --gold:#c9a84c;
-  }
-  *{box-sizing:border-box;margin:0;padding:0}
-  body{background:var(--bg);color:var(--text);font-family:'Syne',sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;overflow-x:hidden}
-  body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:0;opacity:.4}
-  header{width:100%;max-width:600px;padding:40px 24px 20px;position:relative;z-index:1}
-  .logo-row{display:flex;align-items:center;gap:12px;margin-bottom:8px}
-  .logo-badge{width:36px;height:36px;border:2px solid var(--gold);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;color:var(--gold);letter-spacing:-1px}
-  h1{font-size:clamp(22px,5vw,28px);font-weight:800;letter-spacing:-.5px}
-  h1 span{color:var(--gold)}
-  .subtitle{font-size:13px;color:var(--muted);font-family:'DM Mono',monospace;margin-top:6px}
-  .alert-banner{width:100%;max-width:600px;margin:0 24px 24px;padding:12px 16px;background:rgba(255,59,92,.08);border:1px solid rgba(255,59,92,.3);border-radius:10px;font-size:12px;font-family:'DM Mono',monospace;color:#ff8fa0;line-height:1.6;position:relative;z-index:1}
-  .main{width:100%;max-width:600px;padding:0 24px 60px;display:flex;flex-direction:column;gap:20px;position:relative;z-index:1}
-  .capture-zone{background:var(--surface);border:1.5px solid var(--border);border-radius:16px;overflow:hidden}
-  .video-wrap{position:relative;width:100%;aspect-ratio:16/9;background:#050508}
-  video{width:100%;height:100%;object-fit:cover;display:block}
-  .scanner-frame{position:absolute;inset:0;display:none;align-items:center;justify-content:center;pointer-events:none}
-  .scanner-frame .box{width:70%;height:45px;border:2px solid rgba(201,168,76,.5);border-radius:6px;position:relative}
-  .scanner-frame .box::before{content:'';position:absolute;left:0;right:0;top:50%;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);animation:scan 2s ease-in-out infinite}
-  @keyframes scan{0%,100%{opacity:0;transform:translateY(-10px)}50%{opacity:1;transform:translateY(10px)}}
-  .label-overlay{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);font-family:'DM Mono',monospace;font-size:11px;color:rgba(201,168,76,.8);background:rgba(0,0,0,.5);padding:3px 10px;border-radius:20px;white-space:nowrap;display:none}
-  .camera-off-msg{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:var(--muted);font-size:13px;text-align:center}
-  .controls{display:flex;gap:8px;padding:14px;flex-wrap:wrap}
-  .btn{flex:1;min-width:100px;padding:12px 8px;border:none;border-radius:10px;font-family:'Syne',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .15s}
-  .btn:active{transform:scale(.97)}
-  .btn-primary{background:var(--gold);color:#0a0a0f}
-  .btn-primary:hover{background:#d4b56a}
-  .btn-secondary{background:var(--border);color:var(--text)}
-  .btn-secondary:hover{background:#2a2a3e}
-  .btn:disabled{opacity:.35;cursor:not-allowed;transform:none}
-  input[type=file]{display:none}
-  .manual-section{background:var(--surface);border:1.5px solid var(--border);border-radius:16px;padding:18px}
-  .section-label{font-size:11px;font-family:'DM Mono',monospace;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:12px}
-  .input-row{display:flex;gap:10px;flex-wrap:wrap}
-  .serie-input{flex:1;min-width:120px;background:var(--bg);border:1.5px solid var(--border);border-radius:10px;padding:12px 14px;font-family:'DM Mono',monospace;font-size:15px;color:var(--text);letter-spacing:2px;text-transform:uppercase;outline:none;transition:border-color .2s}
-  .serie-input:focus{border-color:var(--gold)}
-  .serie-input::placeholder{color:var(--muted);letter-spacing:0;font-size:13px}
-  .denom-select{background:var(--bg);border:1.5px solid var(--border);border-radius:10px;padding:12px 10px;font-family:'DM Mono',monospace;font-size:14px;color:var(--text);outline:none;cursor:pointer;transition:border-color .2s}
-  .denom-select:focus{border-color:var(--gold)}
-  .result-card{border-radius:16px;padding:24px;display:none;animation:fadeUp .3s ease}
-  @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
-  .result-card.ok{display:block;background:rgba(0,229,122,.06);border:1.5px solid rgba(0,229,122,.3)}
-  .result-card.bad{display:block;background:rgba(255,59,92,.06);border:1.5px solid rgba(255,59,92,.3)}
-  .result-card.warn{display:block;background:rgba(255,194,51,.06);border:1.5px solid rgba(255,194,51,.3)}
-  .result-status{font-size:28px;font-weight:800;margin-bottom:6px}
-  .result-card.ok .result-status{color:var(--ok)}
-  .result-card.bad .result-status{color:var(--bad)}
-  .result-card.warn .result-status{color:var(--warn)}
-  .result-serie{font-family:'DM Mono',monospace;font-size:20px;letter-spacing:3px;margin-bottom:8px}
-  .result-desc{font-size:14px;color:var(--muted);line-height:1.6}
-  .processing{display:none;align-items:center;gap:12px;padding:18px;background:var(--surface);border:1.5px solid var(--border);border-radius:16px;font-size:14px;color:var(--muted)}
-  .processing.active{display:flex}
-  .spinner{width:20px;height:20px;border:2px solid var(--border);border-top-color:var(--gold);border-radius:50%;animation:spin .8s linear infinite;flex-shrink:0}
-  @keyframes spin{to{transform:rotate(360deg)}}
-  .debug-box{background:var(--surface);border:1.5px dashed var(--border);border-radius:12px;padding:14px;display:none}
-  .debug-box.active{display:block}
-  .debug-label{font-size:10px;font-family:'DM Mono',monospace;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px}
-  .debug-text{font-family:'DM Mono',monospace;font-size:12px;color:var(--gold);word-break:break-all;line-height:1.7}
-  .info-box{background:var(--surface);border:1.5px solid var(--border);border-radius:14px;padding:16px;font-size:12px;color:var(--muted);font-family:'DM Mono',monospace;line-height:1.7}
-  .info-box a{color:var(--gold);text-decoration:none}
-  .tag{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:500;margin-right:4px}
-  .tag-10{background:rgba(201,168,76,.15);color:var(--gold)}
-  .tag-20{background:rgba(0,229,122,.12);color:var(--ok)}
-  .tag-50{background:rgba(255,59,92,.12);color:var(--bad)}
-</style>
+<link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
 
@@ -160,6 +91,6 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js"></script>
-<script src="app.js?v=1.9"></script>
+<script src="assets/js/app.js"></script>
 </body>
 </html>
