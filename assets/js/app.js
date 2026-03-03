@@ -265,14 +265,34 @@ async function processImage(blob) {
     
     if (rawText) {
       console.log('Texto RAW detectado:', rawText);
-      // Limpieza pre-regex: eliminar ruidos comunes de palabras en billetes
+      // Limpieza pre-regex: eliminar ruidos comunes y palabras que confunden
       let cleanText = rawText.toUpperCase()
-        .replace(/BOLIVIA|ESTADO|PLURINACIONAL|BANCO|CENTRAL|LEY|DE|NOVIEMBRE/g, ' ')
+        .replace(/BOLIVIA|ESTADO|PLURINACIONAL|BANCO|CENTRAL|LEY|DE|NOVIEMBRE|SERIE/g, ' ')
+        // Limpiar espacios extras en BOLIVI A o similares
+        .replace(/BOLIVI\s*A/g, ' ')
         .replace(/[OI]/g, (m) => m === 'O' ? '0' : '1');
       
-      // Busca patrones: Prioriza número seguido de letra (ej: 12345678 B)
-      const match = cleanText.match(/(\d{7,11}\s*[A-Z])|([A-Z]\s*\d{7,11})/);
-      if (match) serial = match[0].replace(/\s/g, '');
+      // Busca patrones: Prioriza número seguido de una letra
+      // Regex ampliada para capturar el match y luego corregir la letra si es necesario
+      const match = cleanText.match(/(\d{7,11})\s*([A-Z86G L])/); 
+      
+      if (match) {
+        let numPart = match[1];
+        let letPart = match[2].trim();
+
+        // Mapeo inteligente: Si después del número hay algo que parece una B, lo forzamos a B
+        // (L, G, 8, 6 son errores comunes de OCR para la letra B en esa zona)
+        if (['L','G','8','6','S'].includes(letPart)) {
+           console.log(`Corrigiendo letra detectada '${letPart}' a 'B' por probabilidad`);
+           letPart = 'B';
+        }
+        
+        serial = numPart + letPart;
+      } else {
+        // Fallback al patrón invertido si no hay match de numero+letra
+        const matchInv = cleanText.match(/([A-Z])\s*(\d{7,11})/);
+        if (matchInv) serial = matchInv[1] + matchInv[2];
+      }
     }
 
     // Intento 2 — Claude Vision (solo si es necesario)
