@@ -68,45 +68,21 @@ function parsearSerie(raw) {
 // HELPERS DE UI
 // ────────────────────────────────────────────────────────────
 function showResult(label, status, desc) {
-  const successModal = document.getElementById('success-modal');
-  const errorModal   = document.getElementById('error-modal');
-  
-  // Ocultar ambos primero
-  successModal.classList.add('hidden'); successModal.classList.remove('flex');
-  errorModal.classList.add('hidden');   errorModal.classList.remove('flex');
-
-  if (status === 'ok') {
-    document.getElementById('success-serie').textContent = 'SERIE: ' + label.toUpperCase();
-    document.getElementById('success-desc').textContent  = desc;
-    successModal.classList.remove('hidden');
-    successModal.classList.add('flex');
-  } else {
-    // bad o warn se muestran en el modal de error/alerta
-    document.getElementById('error-serie').textContent = 'SERIE: ' + label.toUpperCase();
-    document.getElementById('error-desc').textContent  = desc;
-    errorModal.classList.remove('hidden');
-    errorModal.classList.add('flex');
-  }
+  const card = document.getElementById('resultCard');
+  card.className = 'result-card ' + status;
+  document.getElementById('resultSerie').textContent  = label.toUpperCase();
+  document.getElementById('resultDesc').textContent   = desc;
+  document.getElementById('resultStatus').textContent = {
+    ok:   '✅ HABILITADO',
+    bad:  '❌ INHABILITADO',
+    warn: '⚠️ VERIFICAR'
+  }[status];
+  card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
 
-// Cerrar modales
-document.querySelectorAll('.clear-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.getElementById('success-modal').classList.add('hidden');
-    document.getElementById('success-modal').classList.remove('flex');
-    document.getElementById('error-modal').classList.add('hidden');
-    document.getElementById('error-modal').classList.remove('flex');
-  });
-});
-
 function setProcessing(on, msg = '') {
-  const proc = document.getElementById('processing');
-  if (on) {
-    proc.classList.add('active');
-    document.getElementById('processingMsg').textContent = msg;
-  } else {
-    proc.classList.remove('active');
-  }
+  document.getElementById('processing').classList.toggle('active', on);
+  if (msg) document.getElementById('processingMsg').textContent = msg;
 }
 
 
