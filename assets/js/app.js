@@ -141,8 +141,9 @@ async function verificar(serieRaw, denominacion) {
     const hit = await consultarSupabase(parsed.serie, parsed.numero, parseInt(denominacion));
     setProcessing(false);
 
+    const denomSeleccionada = parseInt(denominacion);
+
     if (hit) {
-      const denomSeleccionada = parseInt(denominacion);
       let mensajeError = `Billete INHABILITADO. Pertenece al rango ${hit.serie}${hit.numero_inicio}–` +
         `${hit.serie}${hit.numero_fin} (Bs ${hit.denominacion}). ` +
         `Fue sustraído en el accidente de El Alto. No debe circular.`;
