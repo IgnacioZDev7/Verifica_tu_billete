@@ -149,7 +149,7 @@ async function verificar(serieRaw, denominacion) {
         `Fue sustraído en el accidente de El Alto. No debe circular.`;
       
       if (hit.denominacion !== denomSeleccionada) {
-        mensajeError += `\n\n⚠️ NOTA: El sistema detectó este robo para un billete de Bs ${hit.denominacion}, pero seleccionaste Bs ${denomSeleccionada}.`;
+        mensajeError += `\n\n⚠️ NOTA: El sistema detectó esta serie para un billete de Bs ${hit.denominacion}, pero seleccionaste Bs ${denomSeleccionada}.`;
       }
 
       showResult(

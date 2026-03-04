@@ -27,7 +27,7 @@ video{width:100%;height:100%;object-fit:cover;display:block}
 .camera-off-msg{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:var(--muted);font-size:13px;text-align:center}
 .controls{display:flex;gap:12px;padding:24px;width:100%}
 .scan-action-btn{flex:1;height:55px;background:linear-gradient(135deg, #F37021, #FF8F44);color:white;font-size:14px;font-weight:800;border-radius:16px;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow: 0 10px 20px rgba(243, 112, 33, 0.2);border:none;transition:all 0.3s; text-transform:uppercase}
-.capture-action-btn{flex:1;height:55px;background:rgba(255,255,255,0.05);border:1.5px solid rgba(243,112,33,0.3);color:white;font-size:14px;font-weight:800;border-radius:16px;transition:all 0.3s; text-transform:uppercase}
+.capture-action-btn{flex:1;height:55px;background:rgba(255,255,255,0.05);border:1.5px solid rgba(243,112,33,0.3);color:white;font-size:14px;font-weight:800;border-radius:16px;display:flex;align-items:center;justify-content:center;gap:8px;transition:all 0.3s; text-transform:uppercase}
 .capture-action-btn:not(:disabled):hover{background:rgba(243,112,33,0.1); border-color:var(--gold)}
 .scan-action-btn:hover{transform:translateY(-2px);box-shadow: 0 12px 25px rgba(243, 112, 33, 0.3);}
 .scan-action-btn:active, .capture-action-btn:active{transform:scale(0.97)}
@@ -99,7 +99,7 @@ input[type=file]{display:none}
 .modal-title{font-size:24px;font-weight:800;color:white;margin-bottom:8px;letter-spacing:-0.5px; font-family:'Syne', sans-serif}
 .modal-serial-tag{background:rgba(243,112,33,0.1); border:1px solid rgba(243,112,33,0.3); color:var(--gold); padding:6px 14px; border-radius:10px; font-family:'DM Mono', monospace; font-size:16px; font-weight:700; letter-spacing:2px; margin-bottom:15px; display:inline-block}
 .modal-subtitle{font-size:11px;font-weight:700;color:var(--gold);letter-spacing:2px;text-transform:uppercase;margin-bottom:20px;opacity:0.9; font-family:'DM Mono', monospace}
-.modal-desc{font-size:14px;color:rgba(255,255,255,0.6);line-height:1.6;margin-bottom:30px; font-family:'DM Mono', monospace}
+.modal-desc{font-size:14px;color:rgba(255,255,255,0.6);line-height:1.6;margin-bottom:30px; font-family:'DM Mono', monospace; white-space: pre-wrap}
 .modal-btn-clear{width:100%;padding:18px;background:#F2F2F7;color:#1C1C1E;border:none;border-radius:18px;font-weight:800;font-size:14px;cursor:pointer;transition:all 0.2s;text-transform:uppercase; font-family:'Syne', sans-serif}
 .modal-btn-clear:hover{background:white;transform:scale(1.02)}
 .modal-btn-report{width:100%;margin-top:12px;padding:18px;background:var(--gold);color:white;border:none;border-radius:18px;font-weight:800;font-size:14px;cursor:pointer;transition:all 0.2s;text-transform:uppercase; font-family:'Syne', sans-serif}
