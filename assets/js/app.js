@@ -159,7 +159,7 @@ async function verificar(serieRaw, denominacion) {
     } else {
       showResult(
         serieRaw, 'ok',
-        'Este billete NO está en ningún rango inhabilitado y puede circular con normalidad.',
+        `Este billete de Bs ${denomSeleccionada} NO está en ningún rango inhabilitado y puede circular con normalidad.`,
         `${parsed.numStr} ${parsed.serie}`
       );
     }
