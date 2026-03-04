@@ -142,14 +142,19 @@ async function verificar(serieRaw, denominacion) {
     setProcessing(false);
 
     const denomSeleccionada = parseInt(denominacion);
+    let denomReal = denomSeleccionada;
+    let mostrarNota = false;
 
     if (hit) {
+      denomReal = hit.denominacion;
+      mostrarNota = (denomReal !== denomSeleccionada);
+      
       let mensajeError = `Billete INHABILITADO. Pertenece al rango ${hit.serie}${hit.numero_inicio}–` +
         `${hit.serie}${hit.numero_fin} (Bs ${hit.denominacion}). ` +
         `Fue sustraído en el accidente de El Alto. No debe circular.`;
       
-      if (hit.denominacion !== denomSeleccionada) {
-        mensajeError += `\n\n⚠️ NOTA: El sistema detectó esta serie para un billete de Bs ${hit.denominacion}, pero seleccionaste Bs ${denomSeleccionada}.`;
+      if (mostrarNota) {
+        mensajeError += `\n\n⚠️ NOTA: El sistema detectó esta serie para un billete de Bs ${denomReal}, pero seleccionaste Bs ${denomSeleccionada}.`;
       }
 
       showResult(
@@ -158,10 +163,24 @@ async function verificar(serieRaw, denominacion) {
         `${parsed.numStr} ${parsed.serie}`
       );
     } else {
+      // Si no es robado, chequeamos si el OCR detectó una denominación distinta
+      // NOTA: ocrDenom viene de processImage si se detecta "10", "20", "50"
+      if (window._lastOcrDenom && window._lastOcrDenom !== denomSeleccionada) {
+        denomReal = window._lastOcrDenom;
+        mostrarNota = true;
+      }
+
+      let mensajeOk = `Este billete de Bs ${denomSeleccionada} NO está en ningún rango inhabilitado y puede circular con normalidad.`;
+      
+      if (mostrarNota) {
+        mensajeOk += `\n\n⚠️ NOTA: El sistema detectó esta serie para un billete de Bs ${denomReal}, pero seleccionaste Bs ${denomSeleccionada}.`;
+      } else {
+        mensajeOk += `\n\n⚠️ NOTA: El sistema no detectó esta serie para ninguna de las denominaciones restringidas (Bs 10, 20 o 50).`;
+      }
+
       showResult(
         serieRaw, 'ok',
-        `Este billete de Bs ${denomSeleccionada} NO está en ningún rango inhabilitado y puede circular con normalidad.` +
-        `\n\n⚠️ NOTA: El sistema no detectó esta serie para ninguna de las denominaciones restringidas (Bs 10, 20 o 50).`,
+        mensajeOk,
         `${parsed.numStr} ${parsed.serie}`
       );
     }
@@ -267,6 +286,11 @@ async function processImage(blob) {
     
     if (rawText) {
       console.log('Texto RAW detectado:', rawText);
+      
+      // Intentar detectar denominación (10, 20, 50) de forma simple
+      const denomMatch = rawText.match(/\b(10|20|50)\b/);
+      window._lastOcrDenom = denomMatch ? parseInt(denomMatch[1]) : null;
+
       // Limpieza pre-regex: eliminar ruidos comunes y palabras que confunden
       let cleanText = rawText.toUpperCase()
         .replace(/BOLIVIA|ESTADO|PLURINACIONAL|BANCO|CENTRAL|LEY|DE|NOVIEMBRE|SERIE/g, ' ')
