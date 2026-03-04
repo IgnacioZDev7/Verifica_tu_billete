@@ -160,7 +160,8 @@ async function verificar(serieRaw, denominacion) {
     } else {
       showResult(
         serieRaw, 'ok',
-        `Este billete de Bs ${denomSeleccionada} NO está en ningún rango inhabilitado y puede circular con normalidad.`,
+        `Este billete de Bs ${denomSeleccionada} NO está en ningún rango inhabilitado y puede circular con normalidad.` +
+        `\n\n⚠️ NOTA: El sistema no detectó esta serie para ninguna de las denominaciones restringidas (Bs 10, 20 o 50).`,
         `${parsed.numStr} ${parsed.serie}`
       );
     }
@@ -274,15 +275,14 @@ async function processImage(blob) {
         .replace(/[OI]/g, (m) => m === 'O' ? '0' : '1');
       
       // Busca patrones: Prioriza número seguido de una letra
-      // Regex ampliada para capturar el match y luego corregir la letra si es necesario
-      const match = cleanText.match(/(\d{7,11})\s*([A-Z86G L])/); 
+      // Regex fijada a 8-9 dígitos por seguridad y precisión
+      const match = cleanText.match(/(\d{8,9})\s*([A-Z86G L])/); 
       
       if (match) {
         let numPart = match[1];
         let letPart = match[2].trim();
 
-        // Mapeo inteligente: Si después del número hay algo que parece una B, lo forzamos a B
-        // (L, G, 8, 6 son errores comunes de OCR para la letra B en esa zona)
+        // Mapeo inteligente...
         if (['L','G','8','6','S'].includes(letPart)) {
            console.log(`Corrigiendo letra detectada '${letPart}' a 'B' por probabilidad`);
            letPart = 'B';
@@ -290,8 +290,8 @@ async function processImage(blob) {
         
         serial = numPart + letPart;
       } else {
-        // Fallback al patrón invertido si no hay match de numero+letra
-        const matchInv = cleanText.match(/([A-Z])\s*(\d{7,11})/);
+        // Fallback al patrón invertido (8-9 dígitos)
+        const matchInv = cleanText.match(/([A-Z])\s*(\d{8,9})/);
         if (matchInv) serial = matchInv[1] + matchInv[2];
       }
     }
